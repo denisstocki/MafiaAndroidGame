@@ -1,5 +1,6 @@
 package com.example.mafia.composes
 
+import android.util.Log
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -9,11 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.SnackbarDefaults.backgroundColor
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,8 +20,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -33,19 +27,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.mafia.R
-import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Black200
-import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @Composable
 fun StartAnimation(
-    navController: NavHostController
+    navController: NavHostController,
+    gameViewModel: GameViewModel
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
@@ -113,14 +105,26 @@ fun StartAnimation(
             }
         }
     }
+    val waitingPin = remember {
+        mutableStateOf(false)
+    }
+    val gamePin = remember {
+        mutableStateOf("")
+    }
 
     StartCompose(
         planes,
         colors,
         navController,
         width,
-        height
-    )
+        height,
+        gameViewModel,
+        waitingPin,
+        gamePin
+    ){
+        gameViewModel.createGame(waitingPin,gamePin)
+    }
+
 }
 
 @Composable
@@ -130,10 +134,13 @@ fun StartCompose(
     navController: NavHostController,
     width: Dp,
     height: Dp,
+    gameViewModel: GameViewModel,
+    waitingPin: MutableState<Boolean>,
+    gamePin: MutableState<String>,
+    createGame: () -> Unit
 ) {
     var newGamePressed by remember { mutableStateOf(false) }
     var joinGamePressed by remember { mutableStateOf(false) }
-
     Image(
         painter = painterResource(id = R.drawable.frame1),
         contentDescription = null,
@@ -173,6 +180,7 @@ fun StartCompose(
                     text = "NEW GAME",
                     Color.White
                 ) {
+                    createGame()
                     newGamePressed = true
                 }
             }
@@ -181,7 +189,10 @@ fun StartCompose(
                 DialogCompose(
                     navController,
                     DialogType.CREATE,
-                    width
+                    width,
+                    gameViewModel,
+                    waitingPin,
+                    gamePin,
                 ) {
                     newGamePressed = false
                 }
@@ -204,7 +215,10 @@ fun StartCompose(
                 DialogCompose(
                     navController,
                     DialogType.JOIN,
-                    width
+                    width,
+                    gameViewModel,
+                    waitingPin,
+                    gamePin
                 ) {
                     joinGamePressed = false
                 }

@@ -2,11 +2,8 @@ package com.example.mafia.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,68 +16,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mafia.R
 import com.example.mafia.ui.theme.Black200
-import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
 
-class Player (val nickname: String, val role: Role, var roleVisiability: Boolean = false) {
+class Player(val nickname: String, val role: Role, var lifeStatus: LifeStatus = LifeStatus.ALIVE) {
     var voteCounter : Int = 0
-
-    @Composable
-    fun showPlayer(
-        size: Dp
-    ) {
-        var imageForIcon : Int
-        var scale: Float
-        var padding: Dp
-        if (nickname.last() == 'A'){
-            imageForIcon = R.drawable.hat3
-            scale = 1.20f
-            padding = 0.dp
-        }
-        else{
-            imageForIcon = R.drawable.hat4
-            scale = 1.0f
-            padding = 8.dp
-        }
-
-        Box(modifier = Modifier
-            .size(size)
-            .padding(end = 8.dp)) {
-            Image(painter = painterResource(id = R.drawable.frame6), contentDescription = null, modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Red500
-                ),
-            contentScale = ContentScale.FillBounds)
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                    Image(
-                        painter = painterResource(id = imageForIcon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size((size / 2) * scale)
-                            .padding(top = 20.dp / scale / scale)
-                    )
-                    Text(
-                        text = nickname,
-                        modifier = Modifier.padding(top = padding),
-                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                        fontFamily = FontFamily(Font(R.font.anton_regular))
-                    )
-            }
-        }
-
-    }
 
     @Composable
     fun votePlayer(
@@ -134,6 +78,57 @@ class Player (val nickname: String, val role: Role, var roleVisiability: Boolean
 
     }
 
+
+}
+
+@Composable
+fun showPlayer(
+    nickname: String,
+    size: Dp
+) {
+    var imageForIcon : Int
+    var scale: Float
+    var padding: Dp
+    if (nickname.last() == 'A'){
+        imageForIcon = R.drawable.hat3
+        scale = 1.20f
+        padding = 0.dp
+    }
+    else{
+        imageForIcon = R.drawable.hat4
+        scale = 1.0f
+        padding = 8.dp
+    }
+
+    Box(modifier = Modifier
+        .size(size)
+        .padding(end = 8.dp)) {
+        Image(painter = painterResource(id = R.drawable.frame6), contentDescription = null, modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Red500
+            ),
+            contentScale = ContentScale.FillBounds)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = imageForIcon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size((size / 2) * scale)
+                    .padding(top = 20.dp / scale / scale)
+            )
+            Text(
+                text = nickname,
+                modifier = Modifier.padding(top = padding),
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                fontFamily = FontFamily(Font(R.font.anton_regular))
+            )
+        }
+    }
 
 }
 

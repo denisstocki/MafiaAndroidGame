@@ -1,27 +1,24 @@
 package com.example.mafia.composes
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +42,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.mafia.R
+import com.example.mafia.elements.Player
 import com.example.mafia.navigation.NavigationRoutes
-import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 
 @Composable
 fun DialogCompose(
     navController: NavController,
     type: DialogType,
     width: Dp,
+    gameViewModel: GameViewModel,
+    waitingPin: MutableState<Boolean>,
+    gamePin: MutableState<String>,
     onDismiss: () -> Unit
 ) {
 
@@ -79,13 +80,17 @@ fun DialogCompose(
                 JoinCompose(
                     w,
                     h,
-                    navController
+                    navController,
+                    gameViewModel
                 )
             } else {
                 CreateCompose(
                     w,
                     h,
-                    navController
+                    navController,
+                    gameViewModel,
+                    waitingPin,
+                    gamePin
                 )
             }
 
@@ -106,7 +111,10 @@ fun DialogCompose(
 fun CreateCompose(
     w: Dp,
     h: Dp,
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel,
+    waitingPin: MutableState<Boolean>,
+    gamePin: MutableState<String>
 ) {
     val heightBigger = (h - w * 2 / 12) * 3 / 13
     val heightLower = (h - w * 2 / 12) * 2 / 13
@@ -150,18 +158,34 @@ fun CreateCompose(
                 .background(Red500),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "8903",
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
-                    fontSize = 35.sp,
-                    color = Color.Black
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Red500)
-            )
+            if(!waitingPin.value){
+                Text(
+                    text = "Waiting...",
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
+                        fontSize = 35.sp,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Red500)
+                )
+            }
+            if (!gamePin.value.isEmpty()){
+                Text(
+                    text = gamePin.value,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
+                        fontSize = 35.sp,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Red500)
+                )
+            }
         }
 
         Box(
@@ -235,7 +259,9 @@ fun CreateCompose(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
+                        gameViewModel.createPlayer(nickame.text,true)
+                        gameViewModel.pushGame()
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )
@@ -247,7 +273,8 @@ fun CreateCompose(
 fun JoinCompose(
     w: Dp,
     h: Dp,
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
     val heightBigger = (h - w * 2 / 6) * 3 / 13
     val heightLower = (h - w * 2 / 6) * 2 / 13
@@ -381,7 +408,7 @@ fun JoinCompose(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "START",
+                text = "JOIN",
                 color = Red500,
                 textAlign = TextAlign.Center,
                 style = TextStyle(
@@ -390,7 +417,8 @@ fun JoinCompose(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
+                        gameViewModel.createPlayer(nickame.text)
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )

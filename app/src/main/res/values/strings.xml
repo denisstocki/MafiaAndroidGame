@@ -8,4 +8,5 @@
     <string name="medic_desc">Siema to on</string>
     <string name="detective">DETECTIVE</string>
     <string name="detective_desc">Siema to jo</string>
+    <string name="game_create_error">Nie można utworzyć gry</string>
 </resources>

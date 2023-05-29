@@ -6,9 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mafia.composes.*
+import com.example.mafia.viewmodel.GameViewModel
 
 @Composable
-fun Navigation(context: Context)
+fun Navigation(context: Context, gameViewModel: GameViewModel)
 {
     val navController = rememberNavController()
 
@@ -24,11 +25,11 @@ fun Navigation(context: Context)
 
         // Works fine
         composable(route = NavigationRoutes.Start.route) {
-            StartAnimation(navController = navController)
+            StartAnimation(navController = navController,gameViewModel)
         }
 
         composable(route = NavigationRoutes.Lobby.route) {
-            LobbyCompose(navController = navController)
+            LobbyCompose(navController = navController,gameViewModel)
         }
 
         composable(route = NavigationRoutes.Loading.route) {
