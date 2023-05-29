@@ -132,19 +132,6 @@ fun TownWinCompose(
             var joinGame by remember {
                 mutableStateOf(false) // Initially dialog is closed
             }
-
-            ClickableButton(
-                text = "REVENGE",
-                Red500
-            ) {
-                joinGame = true
-            }
-
-            if (joinGame) {
-                JoinGameCompose(navController) {
-                    joinGame = false
-                }
-            }
         }
     }
     Image(

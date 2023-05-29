@@ -22,6 +22,7 @@ fun Navigation(context: Context)
             WelcomeAnimation(navController = navController)
         }
 
+        // Works fine
         composable(route = NavigationRoutes.Start.route) {
             StartAnimation(navController = navController)
         }

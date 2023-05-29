@@ -46,6 +46,7 @@ fun WelcomeAnimation(
     LaunchedEffect(Unit) {
         offsetX.animateTo(0f, tween(1500, easing = LinearOutSlowInEasing))
         delay(1000)
+        navController.popBackStack()
         navController.navigate(NavigationRoutes.Start.route)
     }
 

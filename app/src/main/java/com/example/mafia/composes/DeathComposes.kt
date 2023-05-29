@@ -70,7 +70,7 @@ fun DeathCompose(
 
     LaunchedEffect(Unit) {
         time.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 5000, easing = LinearEasing))
-        navController.navigate(NavigationRoutes.Start.route)
+        navController.navigate(NavigationRoutes.Win.route)
     }
 
     Box(

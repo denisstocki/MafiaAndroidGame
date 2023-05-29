@@ -71,13 +71,20 @@ fun StartAnimation(
         2700L
     )
 
-    val offsetXC1 = remember { Animatable(Color.Black) }
-    val offsetXC2 = remember { Animatable(Color.Black) }
+    val colors = listOf(
+        remember { Animatable(Color.Black) },
+        remember { Animatable(Color.Black) }
+    )
 
-    val bottomImage = painterResource(id = R.drawable.town1)
+    val freqs = listOf(
+        200,
+        350
+    )
 
-    val bottomImH = with(LocalDensity.current) { bottomImage.intrinsicSize.height.toDp() }
-    val bottomImW = with(LocalDensity.current) { bottomImage.intrinsicSize.width.toDp() }
+    val colorsObjects = listOf(
+        Color.Yellow,
+        Color.Red
+    )
 
     for (i in planes.indices) {
         LaunchedEffect(Unit) {
@@ -98,42 +105,31 @@ fun StartAnimation(
         }
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            offsetXC1.animateTo(Color.Yellow, animationSpec = tween(200, easing = LinearEasing))
-            offsetXC1.animateTo(Color.Black, animationSpec = tween(200, easing = LinearEasing))
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            offsetXC2.animateTo(Red500, animationSpec = tween(350, easing = LinearEasing))
-            offsetXC2.animateTo(Color.Black, animationSpec = tween(350, easing = LinearEasing))
+    for (i in colors.indices) {
+        LaunchedEffect(Unit) {
+            while (true) {
+                colors[i].animateTo(colorsObjects[i % 2], animationSpec = tween(freqs[i], easing = LinearEasing))
+                colors[i].animateTo(Color.Black, animationSpec = tween(freqs[i], easing = LinearEasing))
+            }
         }
     }
 
     StartCompose(
         planes,
-        offsetXC1,
-        offsetXC2,
+        colors,
         navController,
         width,
-        height,
-        bottomImW,
-        bottomImH
+        height
     )
 }
 
 @Composable
 fun StartCompose(
     planes: List<Animatable<Float, AnimationVector1D>>,
-    offsetXC1: Animatable<Color, AnimationVector4D>,
-    offsetXC2: Animatable<Color, AnimationVector4D>,
+    colors: List<Animatable<Color, AnimationVector4D>>,
     navController: NavHostController,
     width: Dp,
     height: Dp,
-    imageW: Dp,
-    imageH: Dp
 ) {
     var newGamePressed by remember { mutableStateOf(false) }
     var joinGamePressed by remember { mutableStateOf(false) }
@@ -182,8 +178,10 @@ fun StartCompose(
             }
 
             if (newGamePressed) {
-                NewGameCompose(
-                    navController
+                DialogCompose(
+                    navController,
+                    DialogType.CREATE,
+                    width
                 ) {
                     newGamePressed = false
                 }
@@ -203,8 +201,10 @@ fun StartCompose(
             }
 
             if (joinGamePressed) {
-                JoinGameCompose(
-                    navController
+                DialogCompose(
+                    navController,
+                    DialogType.JOIN,
+                    width
                 ) {
                     joinGamePressed = false
                 }
@@ -226,18 +226,18 @@ fun StartCompose(
             PlaneDir.RIGHT
         )
 
-        val colors = listOf(
-            offsetXC1,
-            offsetXC2,
-            offsetXC2,
-            offsetXC1
+        val colorsSeq = listOf(
+            colors[0],
+            colors[1],
+            colors[1],
+            colors[0],
         )
 
         for (i in planes.indices) {
             PlaneCompose(
                 offsetX = planes[i],
-                offsetXC1 = colors[(i * 2) % planes.size],
-                offsetXC2 = colors[(i * 2 + 1) % planes.size],
+                color1 = colorsSeq[(i * 2) % planes.size],
+                color2 = colorsSeq[(i * 2 + 1) % planes.size],
                 width = width,
                 height = height * (8 + i) / 16,
                 dirs[i % 2]
@@ -249,8 +249,8 @@ fun StartCompose(
 @Composable
 fun PlaneCompose(
     offsetX: Animatable<Float, AnimationVector1D>,
-    offsetXC1: Animatable<Color, AnimationVector4D>,
-    offsetXC2: Animatable<Color, AnimationVector4D>,
+    color1: Animatable<Color, AnimationVector4D>,
+    color2: Animatable<Color, AnimationVector4D>,
     width: Dp,
     height: Dp,
     dir: PlaneDir
@@ -275,14 +275,14 @@ fun PlaneCompose(
         Box(
             modifier = Modifier
                 .size(2.dp)
-                .background(color = offsetXC1.value)
+                .background(color = color1.value)
                 .align(Alignment.CenterStart)
                 .clip(CircleShape)
         )
         Box(
             modifier = Modifier
                 .size(2.dp)
-                .background(color = offsetXC2.value)
+                .background(color = color2.value)
                 .align(Alignment.CenterEnd)
                 .clip(CircleShape)
         )
@@ -322,4 +322,9 @@ fun ClickableButton(
 enum class PlaneDir {
     LEFT,
     RIGHT
+}
+
+enum class DialogType {
+    CREATE,
+    JOIN
 }
