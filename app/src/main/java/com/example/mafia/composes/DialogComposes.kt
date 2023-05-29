@@ -1,6 +1,5 @@
 package com.example.mafia.composes
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.mafia.R
-import com.example.mafia.elements.Player
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
@@ -261,7 +259,7 @@ fun CreateCompose(
                     .fillMaxWidth()
                     .clickable {
                         gameViewModel.createPlayer(nickame.text,true)
-                        gameViewModel.pushGame()
+                        gameViewModel.asssignListener()
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )
@@ -280,7 +278,7 @@ fun JoinCompose(
     val heightLower = (h - w * 2 / 6) * 2 / 13
 
     val blockedCharacters = setOf(' ', '-', ',', '.', '\n')
-    var text: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var gamePin: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     var nickame: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
@@ -316,7 +314,7 @@ fun JoinCompose(
                 .background(Red500)
                 .fillMaxWidth()
                 .height(heightLower),
-            value = text,
+            value = gamePin,
             placeholder = {
                 Text(
                     text = "....",
@@ -329,7 +327,7 @@ fun JoinCompose(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { txt ->
                 if (txt.text.length <= 4 && txt.text.all { !blockedCharacters.contains(it) }) {
-                    text = txt
+                    gamePin = txt
                 }
             },
             textStyle = TextStyle(
@@ -418,6 +416,7 @@ fun JoinCompose(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        gameViewModel.joinToGame(gamePin = gamePin.text)
                         gameViewModel.createPlayer(nickame.text)
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }

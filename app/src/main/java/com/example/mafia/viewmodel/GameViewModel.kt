@@ -2,6 +2,8 @@ package com.example.mafia.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
@@ -13,15 +15,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class GameViewModel : ViewModel() {
     var game = Game()
-    val dbGames = FirebaseDatabase.getInstance().getReference("games")
+    private val dbGames = FirebaseDatabase.getInstance().getReference("games")
+
+    private val _playerList = MutableLiveData(ArrayList<dbPlayer>())
+    val playerList: LiveData<ArrayList<dbPlayer>> = _playerList
 
 
-    fun pushGame(){
+    fun asssignListener(){
         val lobbyRef = dbGames.child(game.pin!!)
         Log.println(Log.ASSERT,"Test", "JEBAC5")
 
@@ -44,7 +47,8 @@ class GameViewModel : ViewModel() {
                             isAdmin
                         )
                         // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
-                        game.playerList.add(player)
+                        addPlayerToList(player)
+                        Log.println(Log.ASSERT,"Test", "${player.nickname}")
                     } else {
                         // Dane gracza są niekompletne
                         Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
@@ -55,18 +59,21 @@ class GameViewModel : ViewModel() {
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // Zmiana danych gracza w lobby
                 val updatedPlayer = snapshot.getValue(Player::class.java)
+                Log.println(Log.ASSERT,"Test", "CHANGED PLAYER")
                 // Wykonaj odpowiednie akcje na podstawie zaktualizowanych danych gracza
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 // Usunięcie gracza z lobby
                 val removedPlayer = snapshot.getValue(Player::class.java)
+                Log.println(Log.ASSERT,"Test", "REMOVED PLAYER")
                 // Wykonaj odpowiednie akcje na podstawie usunięcia gracza
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
                 // Przeniesienie gracza w lobby
                 val movedPlayer = snapshot.getValue(Player::class.java)
+                Log.println(Log.ASSERT,"Test", "MOVED PLAYER")
                 // Wykonaj odpowiednie akcje na podstawie przeniesienia gracza
             }
 
@@ -111,6 +118,15 @@ class GameViewModel : ViewModel() {
         })
     }
 
+    fun addPlayerToList(player: dbPlayer){
+        _playerList.value?.add(player)
+    }
+
+    fun joinToGame(gamePin: String){
+        game.pin = gamePin
+        asssignListener()
+    }
+
 
     fun createPlayer(nickname: String, isAdmin:Boolean = false) {
         val player = dbPlayer(nickname,Role.EMPTY,LifeStatus.ALIVE,isAdmin)
@@ -122,5 +138,16 @@ class GameViewModel : ViewModel() {
         )
 
         dbGames.child(game.pin!!).child(player.nickname!!).updateChildren(playerValues)
+    }
+
+    fun resetPinNumbers(){
+        val firebaseDatabase = FirebaseDatabase.getInstance()
+        val databaseReference = firebaseDatabase.getReference("GamePinNumbers")
+
+        val dataMap = HashMap<String, Boolean>()
+        for (i in 1000..9999){
+            dataMap[i.toString()] = true
+        }
+        databaseReference.setValue(dataMap)
     }
 }

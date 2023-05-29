@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.mafia.R
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Utility
+import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.showPlayer
 import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.navigation.NavigationRoutes
@@ -81,7 +82,8 @@ fun LobbyCompose(
                 modifier = Modifier
                     .size(70.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Red500).clickable {
+                    .background(Red500)
+                    .clickable {
                         navController.navigate(NavigationRoutes.Start.route)
                     }
             ) {
@@ -104,7 +106,8 @@ fun LobbyCompose(
                 modifier = Modifier
                     .size(70.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Red500).clickable {
+                    .background(Red500)
+                    .clickable {
                         navController.navigate(NavigationRoutes.Loading.route)
                     }
             ) {
@@ -125,29 +128,28 @@ fun LobbyCompose(
             horizontalArrangement = Arrangement.SpaceEvenly
         ){
             Text(
-                text = "PLAYERS",
+                text = "PLAYERS:",
                 textAlign = TextAlign.Center,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 fontFamily = FontFamily(Font(R.font.anton_regular))
             )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
             Text(
-                text = "${gameViewModel.game.playerList.size}/32",
+                text = "${gameViewModel.playerList.value!!.size}",
                 textAlign = TextAlign.Center,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
             )
-
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val playerList: ArrayList<dbPlayer> by remember {
-            mutableStateOf(gameViewModel.game.playerList)
-        }
         Box(modifier = Modifier
             .fillMaxSize()
             .background(Grey200)) {
@@ -156,7 +158,7 @@ fun LobbyCompose(
                 .fillMaxWidth()
                 .padding(40.dp),
             ) {
-                itemsIndexed(playerList.chunked(4)) { _, rowPlayers ->
+                itemsIndexed(gameViewModel.playerList.value!!.chunked(4)) { _, rowPlayers ->
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {
