@@ -33,6 +33,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import kotlinx.coroutines.delay
 
 @Composable
@@ -121,7 +123,7 @@ fun WelcomeCompose(
             Text(
                 text = "MAFIA GAME",
                 color = Color.Black,
-                fontSize = 55.sp,
+                fontSize = 55.sp, // Wish it does not damage view on any phone
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
                 modifier = Modifier

@@ -133,7 +133,10 @@ fun TownWinCompose(
                 mutableStateOf(false) // Initially dialog is closed
             }
 
-            ButtonClick(buttonText = "REVENGE", 20) {
+            ClickableButton(
+                text = "REVENGE",
+                Red500
+            ) {
                 joinGame = true
             }
 

@@ -17,12 +17,13 @@ fun Navigation(context: Context)
         startDestination = NavigationRoutes.Welcome.route
     ){
 
+        // Works fine
         composable(route = NavigationRoutes.Welcome.route) {
             WelcomeAnimation(navController = navController)
         }
 
         composable(route = NavigationRoutes.Start.route) {
-            StartCompose(navController = navController)
+            StartAnimation(navController = navController)
         }
 
         composable(route = NavigationRoutes.Lobby.route) {
