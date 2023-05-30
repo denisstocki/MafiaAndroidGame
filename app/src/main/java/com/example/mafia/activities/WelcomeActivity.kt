@@ -17,14 +17,11 @@ class WelcomeActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         val gameViewModel = GameViewModel()
-        gameViewModel.resetPinNumbers()
 
         setContent {
             MafiaTheme{
                 Navigation(context = this,gameViewModel)
             }
         }
-
     }
-
 }
