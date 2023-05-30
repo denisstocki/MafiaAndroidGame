@@ -5,5 +5,5 @@ import com.google.firebase.database.Exclude
 data class Game (
     @get: Exclude
     var pin: String? = null,
-    var playerList: ArrayList<dbPlayer> = ArrayList()
+    var player: dbPlayer? = null
 )

@@ -86,6 +86,7 @@ fun LobbyCompose(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Red500)
                     .clickable {
+                        gameViewModel.removePlayer()
                         navController.navigate(NavigationRoutes.Start.route)
                     }
             ) {
