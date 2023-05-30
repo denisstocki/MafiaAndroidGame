@@ -129,6 +129,7 @@ class GameViewModel : ViewModel() {
                         else {
                             gamesReference.child(game.pin!!).removeValue()
                             pinsReference.child(game.pin!!).setValue(true)
+                            gamesReference.removeEventListener(this)
                         }
 
                         Log.println(Log.ASSERT,"Test", "player removed${playerToRemove.nickname}")
@@ -227,7 +228,8 @@ class GameViewModel : ViewModel() {
 
     fun resetPinNumbers(){
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val databaseReference = firebaseDatabase.getReference("GamePinNumbers")
+        val databaseReference = firebaseDatabase.getReference("GamePi" +
+                "nNumbers")
 
         val dataMap = HashMap<String, Boolean>()
         for (i in 1000..9999){
