@@ -3,6 +3,7 @@ package com.example.mafia.viewmodel
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
@@ -22,6 +23,7 @@ class GameViewModel : ViewModel() {
     private val pinsReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
 
     var playerList = mutableStateListOf<dbPlayer>()
+    var ifIamAdmin: MutableState<Boolean> = mutableStateOf(false)
 
     private var assignFlag = false
 
@@ -105,18 +107,18 @@ class GameViewModel : ViewModel() {
     fun removePlayer(){
         Log.println(Log.ASSERT,"Test", "Usuwam ${game.player!!.nickname!!}")
         gamesReference.child(game.pin!!).child(game.player!!.nickname!!).removeValue()
+        gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
 
         if(playerList.size == 1){
-            gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
             gamesReference.child(game.pin!!).removeValue()
             pinsReference.child(game.pin!!).setValue(true)
         }
+        assignFlag = false
     }
 
     fun resetPinNumbers(){
         val firebaseDatabase = FirebaseDatabase.getInstance()
-        val databaseReference = firebaseDatabase.getReference("GamePi" +
-                "nNumbers")
+        val databaseReference = firebaseDatabase.getReference("GamePinNumbers")
 
         val dataMap = HashMap<String, Boolean>()
         for (i in 1000..9999){
@@ -173,10 +175,11 @@ class GameViewModel : ViewModel() {
                     for(player in playerList){
                         if(player.nickname == playerChanged.nickname){
                             player.isAdmin = playerChanged.isAdmin
+                            ifIamAdmin.value = playerChanged.isAdmin!!
                         }
                     }
 
-                    Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname}")
+                    Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname} ${playerChanged.isAdmin}")
                 } else {
                     // Dane gracza są niekompletne
                     Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")

@@ -1,5 +1,6 @@
 package com.example.mafia.composes
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +49,7 @@ fun LobbyCompose(
     gameViewModel: GameViewModel,
 ){
     val playerList = gameViewModel.playerList
+    val myPlayerIsAdmin = gameViewModel.ifIamAdmin
 
     Column(
         modifier = Modifier
@@ -89,6 +92,7 @@ fun LobbyCompose(
                     .clickable {
                         gameViewModel.removePlayer()
                         navController.navigate(NavigationRoutes.Start.route)
+
                     }
             ) {
                 Image(
@@ -107,21 +111,28 @@ fun LobbyCompose(
                 color = Color.White
             )
 
-            val backgroundColor = remember {
-                if (gameViewModel.game.player!!.isAdmin!!) {
-                    mutableStateOf(Red500)
-                } else {
-                    mutableStateOf( Grey200)
-                }
+            var backgroundColor: Color by remember {
+                mutableStateOf(Red500)
+            }
+
+            if (myPlayerIsAdmin.value) {
+                backgroundColor = Red500
+                Log.println(Log.ASSERT,"Test", "Czerwony")
+            } else {
+                backgroundColor = Grey200
+                Log.println(Log.ASSERT,"Test", "szary")
+
             }
 
             Box(
                 modifier = Modifier
                     .size(70.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(backgroundColor.value)
+                    .background(backgroundColor)
                     .clickable {
-                        navController.navigate(NavigationRoutes.Loading.route)
+                        if(myPlayerIsAdmin.value) {
+                            navController.navigate(NavigationRoutes.Loading.route)
+                        }
                     }
             ) {
                 Image(
