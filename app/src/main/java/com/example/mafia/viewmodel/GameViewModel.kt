@@ -25,133 +25,14 @@ class GameViewModel : ViewModel() {
 
     private var assignFlag = false
 
+
     fun asssignListener(){
         val lobbyRef = gamesReference.child(game.pin!!)
         assignFlag = true
+        Log.println(Log.ASSERT,"Test", "Listener on ${game.pin}")
 
         // Rejestrowanie obserwatora dla zdarzenia childAdded
-        lobbyRef.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val playerData = snapshot.value as? Map<*, *>
-
-                playerData?.let {
-                    val nickname = it["nickname"] as? String
-                    val role = it["role"] as? String
-                    val lifeStatus = it["lifeStatus"] as? String
-                    val isAdmin = it["isAdmin"] as? Boolean
-
-                    if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
-                        val player = dbPlayer(
-                            nickname,
-                            Role.valueOf(role),
-                            LifeStatus.valueOf(lifeStatus),
-                            isAdmin
-                        )
-                        // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
-                        playerList.add(player)
-                        Log.println(Log.ASSERT,"Test", "${player.nickname}")
-                    } else {
-                        // Dane gracza są niekompletne
-                        Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
-                    }
-                }
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val playerData = snapshot.value as? Map<*, *>
-
-                playerData?.let {
-                    val nickname = it["nickname"] as? String
-                    val role = it["role"] as? String
-                    val lifeStatus = it["lifeStatus"] as? String
-                    val isAdmin = it["isAdmin"] as? Boolean
-
-                    if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
-                        val playerChanged = dbPlayer(
-                            nickname,
-                            Role.valueOf(role),
-                            LifeStatus.valueOf(lifeStatus),
-                            isAdmin
-                        )
-
-                        // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
-                        for(player in playerList){
-                            if(player.nickname == playerChanged.nickname){
-                                player.isAdmin = playerChanged.isAdmin
-                            }
-                        }
-
-                        Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname}")
-                    } else {
-                        // Dane gracza są niekompletne
-                        Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
-                    }
-                }
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                // Usunięcie gracza z lobby
-                val playerData = snapshot.value as? Map<*, *>
-
-                playerData?.let {
-                    val nickname = it["nickname"] as? String
-                    val role = it["role"] as? String
-                    val lifeStatus = it["lifeStatus"] as? String
-                    val isAdmin = it["isAdmin"] as? Boolean
-
-                    if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
-                        val playerToRemove = dbPlayer(
-                            nickname,
-                            Role.valueOf(role),
-                            LifeStatus.valueOf(lifeStatus),
-                            isAdmin
-                        )
-
-                        // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
-                        for (player in playerList){
-                            if(player.nickname!! == playerToRemove.nickname){
-                                playerList.remove(player)
-                            }
-                        }
-
-                        // Ustaw nowego admina
-                        if(playerList.size!=0) {
-                            if (playerToRemove.isAdmin!!) {
-                                val randomPlayer = playerList[0]
-                                randomPlayer.isAdmin = true
-
-                                val updatedPlayerValues = mapOf(
-                                    "isAdmin" to randomPlayer.isAdmin
-                                )
-                                gamesReference.child(game.pin!!).child(randomPlayer.nickname!!).updateChildren(updatedPlayerValues)
-                            }
-                        }
-                        else {
-                            gamesReference.child(game.pin!!).removeValue()
-                            pinsReference.child(game.pin!!).setValue(true)
-                            gamesReference.removeEventListener(this)
-                        }
-
-                        Log.println(Log.ASSERT,"Test", "player removed${playerToRemove.nickname}")
-                    }
-                    else {
-                        // Dane gracza są niekompletne
-                        Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
-                    }
-                }
-
-            }
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                // Przeniesienie gracza w lobby
-                val movedPlayer = snapshot.getValue(Player::class.java)
-                Log.println(Log.ASSERT,"Test", "MOVED PLAYER")
-                // Wykonaj odpowiednie akcje na podstawie przeniesienia gracza
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Obsługa błędu, jeśli wystąpił
-            }
-        })
+        lobbyRef.addChildEventListener(childEventListenerOnGame)
     }
 
     fun createGame(waiting: MutableState<Boolean>, gamePin: MutableState<String>){
@@ -224,6 +105,12 @@ class GameViewModel : ViewModel() {
     fun removePlayer(){
         Log.println(Log.ASSERT,"Test", "Usuwam ${game.player!!.nickname!!}")
         gamesReference.child(game.pin!!).child(game.player!!.nickname!!).removeValue()
+
+        if(playerList.size == 1){
+            gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
+            gamesReference.child(game.pin!!).removeValue()
+            pinsReference.child(game.pin!!).setValue(true)
+        }
     }
 
     fun resetPinNumbers(){
@@ -236,5 +123,123 @@ class GameViewModel : ViewModel() {
             dataMap[i.toString()] = true
         }
         databaseReference.setValue(dataMap)
+    }
+
+    private val childEventListenerOnGame = object : ChildEventListener {
+        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+            val playerData = snapshot.value as? Map<*, *>
+
+            playerData?.let {
+                val nickname = it["nickname"] as? String
+                val role = it["role"] as? String
+                val lifeStatus = it["lifeStatus"] as? String
+                val isAdmin = it["isAdmin"] as? Boolean
+
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                    val player = dbPlayer(
+                        nickname,
+                        Role.valueOf(role),
+                        LifeStatus.valueOf(lifeStatus),
+                        isAdmin
+                    )
+                    // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
+                    playerList.add(player)
+                    Log.println(Log.ASSERT,"Test", "added ${player.nickname}")
+                } else {
+                    // Dane gracza są niekompletne
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                }
+            }
+        }
+
+        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            val playerData = snapshot.value as? Map<*, *>
+
+            playerData?.let {
+                val nickname = it["nickname"] as? String
+                val role = it["role"] as? String
+                val lifeStatus = it["lifeStatus"] as? String
+                val isAdmin = it["isAdmin"] as? Boolean
+
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                    val playerChanged = dbPlayer(
+                        nickname,
+                        Role.valueOf(role),
+                        LifeStatus.valueOf(lifeStatus),
+                        isAdmin
+                    )
+
+                    // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
+                    for(player in playerList){
+                        if(player.nickname == playerChanged.nickname){
+                            player.isAdmin = playerChanged.isAdmin
+                        }
+                    }
+
+                    Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname}")
+                } else {
+                    // Dane gracza są niekompletne
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                }
+            }
+        }
+
+        override fun onChildRemoved(snapshot: DataSnapshot) {
+            // Usunięcie gracza z lobby
+            val playerData = snapshot.value as? Map<*, *>
+
+            playerData?.let {
+                val nickname = it["nickname"] as? String
+                val role = it["role"] as? String
+                val lifeStatus = it["lifeStatus"] as? String
+                val isAdmin = it["isAdmin"] as? Boolean
+
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                    val playerToRemove = dbPlayer(
+                        nickname,
+                        Role.valueOf(role),
+                        LifeStatus.valueOf(lifeStatus),
+                        isAdmin
+                    )
+
+                    // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
+                    for (player in playerList){
+                        if(player.nickname!! == playerToRemove.nickname){
+                            playerList.remove(player)
+                        }
+                    }
+
+                    // Ustaw nowego admina
+                    if(playerList.size!=0) {
+                        if (playerToRemove.isAdmin!!) {
+                            val randomPlayer = playerList[0]
+                            randomPlayer.isAdmin = true
+
+                            val updatedPlayerValues = mapOf(
+                                "isAdmin" to randomPlayer.isAdmin
+                            )
+                            gamesReference.child(game.pin!!).child(randomPlayer.nickname!!).updateChildren(updatedPlayerValues)
+                        }
+                    }
+
+                    Log.println(Log.ASSERT,"Test", "player removed${playerToRemove.nickname}")
+                }
+                else {
+                    // Dane gracza są niekompletne
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                }
+            }
+        }
+
+        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            // Przeniesienie gracza w lobby
+            val movedPlayer = snapshot.getValue(Player::class.java)
+            Log.println(Log.ASSERT,"Test", "MOVED PLAYER")
+            // Wykonaj odpowiednie akcje na podstawie przeniesienia gracza
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            // Obsługa błędu, jeśli wystąpił
+        }
     }
 }
