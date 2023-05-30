@@ -193,7 +193,7 @@ class GameViewModel : ViewModel() {
 
     fun joinToGame(gamePin: String){
         game.pin = gamePin
-        playerList = mutableStateListOf<dbPlayer>()
+        playerList.clear()
 
         if(!assignFlag) {
             asssignListener()
