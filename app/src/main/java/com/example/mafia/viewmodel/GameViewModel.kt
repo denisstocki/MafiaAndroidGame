@@ -2,6 +2,8 @@ package com.example.mafia.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,18 +17,19 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlin.reflect.KProperty
 
 class GameViewModel : ViewModel() {
     var game = Game()
     private val dbGames = FirebaseDatabase.getInstance().getReference("games")
 
-    private val _playerList = MutableLiveData(ArrayList<dbPlayer>())
-    val playerList: LiveData<ArrayList<dbPlayer>> = _playerList
+    val playerList = mutableStateListOf<dbPlayer>()
 
+    private var assignFlag = false
 
     fun asssignListener(){
         val lobbyRef = dbGames.child(game.pin!!)
-        Log.println(Log.ASSERT,"Test", "JEBAC5")
+        assignFlag = true
 
         // Rejestrowanie obserwatora dla zdarzenia childAdded
         lobbyRef.addChildEventListener(object : ChildEventListener {
@@ -47,7 +50,7 @@ class GameViewModel : ViewModel() {
                             isAdmin
                         )
                         // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
-                        addPlayerToList(player)
+                        playerList.add(player)
                         Log.println(Log.ASSERT,"Test", "${player.nickname}")
                     } else {
                         // Dane gracza są niekompletne
@@ -85,6 +88,7 @@ class GameViewModel : ViewModel() {
 
     fun createGame(waiting: MutableState<Boolean>, gamePin: MutableState<String>){
         game = Game()
+        assignFlag = false
         val databaseReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
 
         val query = databaseReference.orderByValue().equalTo(true).limitToFirst(1)
@@ -118,13 +122,12 @@ class GameViewModel : ViewModel() {
         })
     }
 
-    fun addPlayerToList(player: dbPlayer){
-        _playerList.value?.add(player)
-    }
-
     fun joinToGame(gamePin: String){
         game.pin = gamePin
-        asssignListener()
+
+        if(!assignFlag) {
+            asssignListener()
+        }
     }
 
 
@@ -138,6 +141,10 @@ class GameViewModel : ViewModel() {
         )
 
         dbGames.child(game.pin!!).child(player.nickname!!).updateChildren(playerValues)
+
+        if(!assignFlag) {
+            asssignListener()
+        }
     }
 
     fun resetPinNumbers(){

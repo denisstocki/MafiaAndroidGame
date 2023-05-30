@@ -2,10 +2,14 @@ package com.example.mafia.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mafia.composes.*
+import com.example.mafia.elements.Utility.playerList
+import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.viewmodel.GameViewModel
 
 @Composable

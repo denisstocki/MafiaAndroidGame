@@ -259,7 +259,6 @@ fun CreateCompose(
                     .fillMaxWidth()
                     .clickable {
                         gameViewModel.createPlayer(nickame.text,true)
-                        gameViewModel.asssignListener()
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )

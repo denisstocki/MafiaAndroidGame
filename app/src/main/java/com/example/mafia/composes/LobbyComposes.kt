@@ -13,6 +13,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,10 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mafia.R
-import com.example.mafia.elements.Player
-import com.example.mafia.elements.Utility
 import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.showPlayer
 import com.example.mafia.firebaseData.dbPlayer
@@ -43,8 +43,10 @@ import com.example.mafia.viewmodel.GameViewModel
 @Composable
 fun LobbyCompose(
     navController: NavController,
-    gameViewModel: GameViewModel
+    gameViewModel: GameViewModel,
 ){
+    val playerList = gameViewModel.playerList
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,7 +141,7 @@ fun LobbyCompose(
             Spacer(modifier = Modifier.width(5.dp))
 
             Text(
-                text = "${gameViewModel.playerList.value!!.size}",
+                text = "${playerList.size}",
                 textAlign = TextAlign.Center,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
@@ -158,7 +160,8 @@ fun LobbyCompose(
                 .fillMaxWidth()
                 .padding(40.dp),
             ) {
-                itemsIndexed(gameViewModel.playerList.value!!.chunked(4)) { _, rowPlayers ->
+
+                itemsIndexed(playerList.chunked(3)) { _, rowPlayers ->
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {
