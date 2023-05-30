@@ -155,7 +155,7 @@ class GameViewModel : ViewModel() {
 
     fun createGame(waiting: MutableState<Boolean>, gamePin: MutableState<String>){
         game = Game()
-        playerList = mutableStateListOf<dbPlayer>()
+        playerList.clear()
         assignFlag = false
 
         val databaseReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
@@ -193,6 +193,7 @@ class GameViewModel : ViewModel() {
 
     fun joinToGame(gamePin: String){
         game.pin = gamePin
+        playerList = mutableStateListOf<dbPlayer>()
 
         if(!assignFlag) {
             asssignListener()

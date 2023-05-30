@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -105,11 +106,20 @@ fun LobbyCompose(
                 ),
                 color = Color.White
             )
+
+            val backgroundColor = remember {
+                if (gameViewModel.game.player!!.isAdmin!!) {
+                    mutableStateOf(Red500)
+                } else {
+                    mutableStateOf( Grey200)
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .size(70.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Red500)
+                    .background(backgroundColor.value)
                     .clickable {
                         navController.navigate(NavigationRoutes.Loading.route)
                     }
