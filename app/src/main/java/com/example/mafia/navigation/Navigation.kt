@@ -45,7 +45,7 @@ fun Navigation(context: Context, gameViewModel: GameViewModel)
         }
 
         composable(route = NavigationRoutes.Death.route) {
-            DeathCompose(navController = navController)
+            DeathCompose(navController = navController, gameViewModel)
         }
 
         composable(route = NavigationRoutes.Win.route) {

@@ -4,15 +4,12 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -24,15 +21,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mafia.R
 import com.example.mafia.navigation.NavigationRoutes
-import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.Black500
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
 fun DeathCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
@@ -69,8 +67,8 @@ fun DeathCompose(
     }
 
     LaunchedEffect(Unit) {
-        time.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 5000, easing = LinearEasing))
-        navController.navigate(NavigationRoutes.Win.route)
+        time.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 10000, easing = LinearEasing))
+        navController.navigate(NavigationRoutes.Day.route)
     }
 
     Box(
@@ -98,8 +96,15 @@ fun DeathCompose(
                     .size(220.dp),
                 contentAlignment = Alignment.Center
             ) {
+                val killedPlayer = gameViewModel.latestKilled
+                val deadInfoText = if (killedPlayer.value == gameViewModel.game.player!!.nickname) {
+                    "YOU ARE"
+                } else {
+                        "${killedPlayer.value} IS"
+                    }
+
                 Text(
-                    text = "YOU ARE",
+                    text = deadInfoText,
                     color = Red500,
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Bold,

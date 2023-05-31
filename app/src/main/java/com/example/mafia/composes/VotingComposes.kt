@@ -96,7 +96,10 @@ fun VotingCompose(
 
     LaunchedEffect(Unit) {
         used.animateTo(1.0f, animationSpec = tween(durationMillis = 20000, easing = LinearEasing))
-        navController.navigate(NavigationRoutes.Death.route)
+//        navController.navigate(NavigationRoutes.Death.route)
+        gameViewModel.finishVote(Role.MAFIA)
+        gameViewModel.finishVote(Role.DOCTOR)
+        gameViewModel.finishVote(Role.DETECTIVE)
     }
 
     Box(
@@ -171,7 +174,9 @@ fun VotingCompose(
                 }
             }
 
-            var votedPlayerNickname: String = ""
+            var votedPlayerNickname by remember {
+                mutableStateOf("")
+            }
 
             Box(modifier = Modifier
                 .fillMaxWidth()
