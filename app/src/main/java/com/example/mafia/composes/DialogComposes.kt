@@ -58,18 +58,16 @@ fun DialogCompose(
     onDismiss: () -> Unit
 ) {
 
-    val w = width * 2 / 3
-    val h = w * 2
-    val heightBigger = (h - w * 2 / 12) * 3 / 13
-    val heightLower = (h - w * 2 / 12) * 2 / 13
+    val dialogWidth = width * 2 / 3
+    val dialogHeight = dialogWidth * 2
 
     Dialog(
         onDismissRequest = { onDismiss() }
     ) {
         Box(
             modifier = Modifier
-                .width(w)
-                .height(h)
+                .width(dialogWidth)
+                .height(dialogHeight)
                 .clip(RoundedCornerShape(30.dp))
                 .border(width = 5.dp, shape = RoundedCornerShape(30.dp), color = Grey200)
                 .background(Color.Black)
@@ -77,15 +75,15 @@ fun DialogCompose(
 
             if (type == DialogType.JOIN) {
                 JoinCompose(
-                    w,
-                    h,
+                    dialogWidth,
+                    dialogHeight,
                     navController,
                     gameViewModel
                 )
             } else {
                 CreateCompose(
-                    w,
-                    h,
+                    dialogWidth,
+                    dialogHeight,
                     navController,
                     gameViewModel,
                     waitingPin,
@@ -97,8 +95,8 @@ fun DialogCompose(
                 painter = painterResource(id = R.drawable.frame1),
                 contentDescription = null,
                 modifier = Modifier
-                    .width(w)
-                    .height(h)
+                    .width(dialogWidth)
+                    .height(dialogHeight)
                     .fillMaxSize(),
                 contentScale = ContentScale.FillBounds
             )
@@ -129,26 +127,12 @@ fun CreateCompose(
             .background(Red500),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightBigger)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "GAME PIN",
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Bold)),
-                    fontSize = 35.sp,
-                    color = Red500
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-            )
-        }
+        CustomLabel(
+            text = "GAME PIN",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
+        )
 
         Box(
             modifier = Modifier
@@ -264,6 +248,33 @@ fun CreateCompose(
                     }
             )
         }
+    }
+}
+
+@Composable
+fun CustomLabel(
+    text: String,
+    height: Dp,
+    backgroundColor: Color,
+    textColor: Color
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            text = text,
+            textAlign = TextAlign.Center,
+            fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
+            fontSize = (height / 2).value.sp,
+            color = textColor
+        )
     }
 }
 
@@ -419,27 +430,36 @@ fun JoinCompose(
                         var temp = gamePin
                         gamePin = TextFieldValue("Wait...")
                         Log.i("ELOELOELO", "jestem przed gameIsEmpty")
-                        gameViewModel.gameIsEmpty(temp.text).thenAccept { isEmpty ->
-                            Log.i("ELOELOELO", "a nie zaczekalem sobie")
-                            if (isEmpty) {
-                                gamePin = TextFieldValue("Err1")
-                            } else {
-                                gamePin = temp
-                                temp = nickame
-                                nickame = TextFieldValue("Wait...")
-                                Log.i("ELOELOELO", "jestem przed gameIncludesNickame")
+                        gameViewModel
+                            .gameIsEmpty(temp.text)
+                            .thenAccept { isEmpty ->
+                                Log.i("ELOELOELO", "a nie zaczekalem sobie")
+                                if (isEmpty) {
+                                    gamePin = TextFieldValue("Err1")
+                                } else {
+                                    gamePin = temp
+                                    temp = nickame
+                                    nickame = TextFieldValue("Wait...")
+                                    Log.i("ELOELOELO", "jestem przed gameIncludesNickame")
 
-                                gameViewModel.gameIncludesNickname(gamePin.text, temp.text).thenAccept { isIncluded ->
-                                    Log.i("ELOELOELO", "a nie zaczekalem sobie nickname")
-
-                                    if (isIncluded) {
-                                        nickame = TextFieldValue("Used")
-                                    } else {
-                                        nickame = temp
-                                        temp = gamePin
-                                        gamePin = TextFieldValue("Wait...")
-                                        gameViewModel.gameIsStarted(temp.text).thenAccept { isStarted ->
+                                    gameViewModel
+                                        .gameIncludesNickname(gamePin.text, temp.text)
+                                        .thenAccept { isIncluded ->
                                             Log.i("ELOELOELO", "a nie zaczekalem sobie nickname")
+
+                                            if (isIncluded) {
+                                                nickame = TextFieldValue("Used")
+                                            } else {
+                                                nickame = temp
+                                                temp = gamePin
+                                                gamePin = TextFieldValue("Wait...")
+                                                gameViewModel
+                                                    .gameIsStarted(temp.text)
+                                                    .thenAccept { isStarted ->
+                                                        Log.i(
+                                                            "ELOELOELO",
+                                                            "a nie zaczekalem sobie nickname"
+                                                        )
 
                                             if (isStarted) {
                                                 gamePin = TextFieldValue("Err2")

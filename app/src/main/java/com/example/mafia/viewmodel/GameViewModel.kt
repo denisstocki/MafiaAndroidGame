@@ -377,6 +377,10 @@ class GameViewModel : ViewModel() {
                         }
                     }
 
+                    if(playerChanged.nickname == game.player!!.nickname){
+                        game.player!!.role = playerChanged.role
+                    }
+
                     Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname} ${playerChanged.isAdmin}")
                 } else {
                     // Dane gracza są niekompletne
