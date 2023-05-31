@@ -166,7 +166,7 @@ fun StartCompose(
             Text(
                 text = "YOUR CHOICE",
                 color = Red500,
-                fontSize = 50.sp, // Wish it does not damage the view on any phone
+                fontSize = (height / 15).value.sp,
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
             )
