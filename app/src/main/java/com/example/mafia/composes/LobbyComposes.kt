@@ -11,11 +11,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,12 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mafia.R
-import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.showPlayer
-import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
@@ -131,7 +126,7 @@ fun LobbyCompose(
                     .background(backgroundColor)
                     .clickable {
                         if(myPlayerIsAdmin.value) {
-                            gameViewModel.assignRole()
+                            gameViewModel.assignRoles()
                             gameViewModel.startGameForAll()
                             navController.navigate(NavigationRoutes.Loading.route)
                         }

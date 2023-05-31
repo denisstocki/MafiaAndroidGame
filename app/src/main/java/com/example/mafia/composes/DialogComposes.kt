@@ -447,6 +447,7 @@ fun JoinCompose(
                                                 gamePin = temp
                                                 gameViewModel.joinToGame(gamePin = gamePin.text)
                                                 gameViewModel.createPlayer(nickame.text)
+                                                gameViewModel.assignListenerForGameStatus(navController)
                                                 navController.navigate(NavigationRoutes.Lobby.route)
                                             }
                                         }

@@ -26,25 +26,25 @@ class WelcomeActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("ELOELOELO", "DESTROOOOOOOOOOOOOOOOOOU")
-        gameViewModel.removePlayer()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.i("ELOELOELO", "STOOOOOOOOOOOOOOOOOOOP")
-        gameViewModel.removePlayer()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.i("ELOELOELO", "PAUUUUUUUUUUUUUUSE")
-        gameViewModel.removePlayer()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        Log.i("ELOELOELO", "DESTROOOOOOOOOOOOOOOOOOU")
+//        gameViewModel.removePlayer()
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//        Log.i("ELOELOELO", "STOOOOOOOOOOOOOOOOOOOP")
+//        gameViewModel.removePlayer()
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        Log.i("ELOELOELO", "PAUUUUUUUUUUUUUUSE")
+//        gameViewModel.removePlayer()
+//    }
+//
+//    override fun onRestart() {
+//        super.onRestart()
+//    }
 }

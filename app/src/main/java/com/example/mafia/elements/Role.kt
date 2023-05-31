@@ -21,9 +21,13 @@ enum class Role(val mainThemeColor: Color, val backGroundColor: Color, val whoYo
 
     companion object {
         private val values = values()
-
         fun random(): Role {
-            return values.random()
+            var role: Role
+            do{
+                role = values.random()
+            }
+            while(role == EMPTY)
+            return role
         }
     }
 }

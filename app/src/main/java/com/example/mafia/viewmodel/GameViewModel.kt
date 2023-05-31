@@ -1,14 +1,11 @@
 package com.example.mafia.viewmodel
 
 import android.util.Log
-import androidx.compose.animation.core.snap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
@@ -35,6 +32,8 @@ class GameViewModel : ViewModel() {
 
     private var assignFlag = false
 
+    private lateinit var gameStatusListener: ValueEventListener
+
 
     fun assignListener(){
         val lobbyRef = gamesReference.child(game.pin!!)
@@ -48,11 +47,10 @@ class GameViewModel : ViewModel() {
     fun assignListenerForGameStatus(navController: NavController){
         val gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
 
-        gameStatusReference.addValueEventListener(object : ValueEventListener {
+        gameStatusListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 when(snapshot.value){
                     "Started" -> {
-                        assignRole()
                         navController.navigate(NavigationRoutes.Loading.route)
                     }
                 }
@@ -62,7 +60,9 @@ class GameViewModel : ViewModel() {
                 TODO("Not yet implemented")
             }
 
-        })
+        }
+
+        gameStatusReference.addValueEventListener(gameStatusListener)
     }
 
     fun createGame(waiting: MutableState<Boolean>, gamePin: MutableState<String>){
@@ -143,6 +143,7 @@ class GameViewModel : ViewModel() {
         Log.println(Log.ASSERT,"Test", "Usuwam ${game.player!!.nickname!!}")
         gamesReference.child(game.pin!!).child(game.player!!.nickname!!).removeValue()
         gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
+        gamesReference.child(game.pin!!).child("game_status").removeEventListener(gameStatusListener)
 
         if(playerList.size == 1){
             gamesReference.child(game.pin!!).removeValue()
@@ -155,9 +156,56 @@ class GameViewModel : ViewModel() {
     fun startGameForAll(){
         gamesReference.child(game.pin!!).child("game_status").setValue("Started")
     }
-    fun assignRole(){
+    fun assignRoles(){
         game.player!!.role = Role.random()
-        gamesReference.child(game.pin!!).child(game.player!!.nickname!!).updateChildren(mapOf("role" to game.player!!.role.toString()))
+        var mafiaAmount = if(playerList.size/3 < 1) 1 else playerList.size/3
+        var medicAmount = if(playerList.size/6 < 1) 1 else playerList.size/6
+        var detectiveAmount = if(playerList.size/4 < 1) 1 else playerList.size/4
+        var civilAmount = playerList.size - mafiaAmount - medicAmount - detectiveAmount
+
+        for(player in playerList){
+            var rolePicked = false
+            while(!rolePicked){
+                when(Role.random()){
+                    Role.MAFIA -> {
+                        if(mafiaAmount > 0){
+                            player.role = Role.MAFIA
+                            mafiaAmount--
+                            rolePicked = true
+
+                        }
+                    }
+                    Role.DETECTIVE -> {
+                        if (detectiveAmount > 0) {
+                            player.role = Role.DETECTIVE
+                            detectiveAmount--
+                            rolePicked = true
+                        }
+                    }
+                    Role.CIVIL -> {
+                        if(civilAmount > 0){
+                            player.role = Role.CIVIL
+                            civilAmount--
+                            rolePicked = true
+                        }
+                    }
+                    Role.DOCTOR -> {
+                        if(medicAmount > 0){
+                            player.role = Role.DOCTOR
+                            medicAmount--
+                            rolePicked = true
+                        }
+                    }
+                    Role.EMPTY -> {}
+                }
+                gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(mapOf("role" to player.role.toString()))
+
+                if(player.nickname == game.player!!.nickname){
+                    game.player!!.role = player.role
+                }
+            }
+        }
+
     }
 
     fun resetPinNumbers(){
