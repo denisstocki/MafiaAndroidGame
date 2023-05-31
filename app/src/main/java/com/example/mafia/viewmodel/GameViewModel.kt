@@ -46,7 +46,8 @@ class GameViewModel : ViewModel() {
         gameStatusReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 when(snapshot.value){
-                    "started" -> {
+                    "Started" -> {
+                        assignRole()
                         navController.navigate(NavigationRoutes.Loading.route)
                     }
                 }
@@ -137,6 +138,7 @@ class GameViewModel : ViewModel() {
             pinsReference.child(game.pin!!).setValue(true)
         }
         assignFlag = false
+        ifIamAdmin.value = false
     }
 
     fun startGameForAll(){
