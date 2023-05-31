@@ -2,6 +2,7 @@ package com.example.mafia.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -18,22 +19,26 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mafia.R
+import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.Red500
 
-class Player(val nickname: String, val role: Role, var lifeStatus: LifeStatus = LifeStatus.ALIVE) {
+class Player(val nickname: String, val role: Role) {
     var voteCounter : Int = 0
 
     @Composable
     fun votePlayer(
+        player: dbPlayer,
+        vote: () -> Unit
     ) {
         var imageForIcon : Int
         var scale: Float
         var padding: Dp
-        if (nickname.last() == 'A'){
+        if (player.nickname!!.last() == 'A'){
             imageForIcon = R.drawable.hat3
             scale = 1.20f
             padding = 0.dp
@@ -46,6 +51,9 @@ class Player(val nickname: String, val role: Role, var lifeStatus: LifeStatus = 
 
         Box(modifier = Modifier
             .size(300.dp)
+            .clickable {
+                vote()
+            }
             .padding(end = 8.dp)) {
             Image(painter = painterResource(id = R.drawable.frame1), contentDescription = null, modifier = Modifier
                 .fillMaxSize()
@@ -68,7 +76,7 @@ class Player(val nickname: String, val role: Role, var lifeStatus: LifeStatus = 
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = nickname,
+                    text = player.nickname!!,
                     modifier = Modifier.height(300.dp - 130.dp * scale - 30.dp),
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 40.sp),
                     fontFamily = FontFamily(Font(R.font.anton_regular)),
@@ -83,7 +91,7 @@ class Player(val nickname: String, val role: Role, var lifeStatus: LifeStatus = 
 }
 @Composable
 fun showPlayer(
-    nickname: String = "Lipek",
+    nickname: String,
     size: Dp = 200.dp
 ) {
     var imageForIcon : Int

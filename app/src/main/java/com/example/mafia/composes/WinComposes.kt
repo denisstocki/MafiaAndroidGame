@@ -23,8 +23,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mafia.R
 import com.example.mafia.elements.Player
+import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility
+import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.deathNote
+import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.Black500
 import com.example.mafia.ui.theme.Grey200
@@ -109,9 +112,7 @@ fun TownWinCompose(
                     .padding(top = 16.dp)
             )
 
-            val playerList: ArrayList<Player> by remember {
-                mutableStateOf(Utility.playerList)
-            }
+            val playerList = ArrayList<dbPlayer>()
 
             Box(modifier = Modifier
                 .fillMaxWidth()
@@ -124,7 +125,9 @@ fun TownWinCompose(
                         .padding((width - 300.dp) / 2 + 1.dp)
                 ) {
                     items(playerList) { player ->
-                        player.votePlayer()
+                        Player("", Role.EMPTY).votePlayer(player){
+
+                        }
                     }
                 }
             }

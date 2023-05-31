@@ -29,6 +29,7 @@ import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility
+import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.deathNote
 import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.navigation.NavigationRoutes
@@ -40,7 +41,7 @@ fun VotingCompose(
     navController: NavController,
     gameViewModel: GameViewModel
 ) {
-    val playerList = gameViewModel.playerList
+    val playerList = ArrayList<dbPlayer>()
 
     if(gameViewModel.game.player!!.lifeStatus == LifeStatus.ALIVE) { // VOTING SCREEN ONLY FOR ALIVE PEOPLE
         when (gameViewModel.game.status){
@@ -185,7 +186,9 @@ fun VotingCompose(
                             }
                     ) {
                         items(playerList) { player ->
-                            gameViewModel.playerVote(player)
+                            Player("", Role.EMPTY).votePlayer(player){
+                                gameViewModel.playerVote(player)
+                            }
                         }
                     }
 
