@@ -50,7 +50,7 @@ fun VotingCompose(
                 when (gameViewModel.game.player!!.role) {
                     Role.MAFIA -> { // ALL EXCEPT MAFIA PLAYERS
                         for (player in gameViewModel.playerList) {
-                            if ( player.lifeStatus == LifeStatus.ALIVE && player.role != Role.MAFIA) {
+                            if ( player.lifeStatus == LifeStatus.ALIVE ) { //&& player.role != Role.MAFIA
                                 playerList.add(player)
                             }
                         }
@@ -95,7 +95,7 @@ fun VotingCompose(
     }
 
     LaunchedEffect(Unit) {
-        used.animateTo(1.0f, animationSpec = tween(durationMillis = 8000, easing = LinearEasing))
+        used.animateTo(1.0f, animationSpec = tween(durationMillis = 20000, easing = LinearEasing))
         navController.navigate(NavigationRoutes.Death.route)
     }
 
@@ -171,6 +171,8 @@ fun VotingCompose(
                 }
             }
 
+            var votedPlayerNickname: String = ""
+
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(height - 210.dp)
@@ -181,20 +183,19 @@ fun VotingCompose(
                     LazyRow(
                         modifier = Modifier
                             .padding((width - 300.dp) / 2 + 1.dp)
-                            .clickable {
-                                voted = true
-                            }
                     ) {
                         items(playerList) { player ->
                             Player("", Role.EMPTY).votePlayer(player){
                                 gameViewModel.playerVote(player)
+                                votedPlayerNickname = player.nickname!!
+                                voted = true
                             }
                         }
                     }
 
                 } else {
                     Box(modifier = Modifier.padding((width - 300.dp) / 2)) {
-                        deathNote()
+                        deathNote(votedPlayerNickname)
                     }
                 }
             }

@@ -142,9 +142,10 @@ fun showPlayer(
 
 @Composable
 fun deathNote(
+    nickname: String
 ) {
     var scale: Float
-    if ("TOMEK".last() == 'A'){
+    if (nickname.last() == 'A'){
         scale = 1.20f
     }
     else{
@@ -175,7 +176,7 @@ fun deathNote(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "TOMEK",
+                text = nickname,
                 modifier = Modifier.height(300.dp - 130.dp * scale - 30.dp),
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 40.sp),
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
