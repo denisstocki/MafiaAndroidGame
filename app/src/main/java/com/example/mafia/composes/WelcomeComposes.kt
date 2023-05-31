@@ -45,7 +45,7 @@ fun WelcomeAnimation(
 
     LaunchedEffect(Unit) {
         offsetX.animateTo(0f, tween(1500, easing = LinearOutSlowInEasing))
-        delay(1000)
+        delay(500)
         navController.popBackStack()
         navController.navigate(NavigationRoutes.Start.route)
     }
@@ -107,7 +107,7 @@ fun WelcomeCompose(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(5.dp)
+                        .padding((width / 40).value.dp)
                         .background(Color.Black, CircleShape)
                         .align(Alignment.Center)
                         .offset(x = -offsetX.value.dp)
@@ -124,7 +124,7 @@ fun WelcomeCompose(
             Text(
                 text = "MAFIA GAME",
                 color = Color.Black,
-                fontSize = 55.sp, // Wish it does not damage view on any phone
+                fontSize = (height / 12).value.sp,
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
                 modifier = Modifier
