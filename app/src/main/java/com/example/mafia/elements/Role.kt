@@ -17,5 +17,13 @@ enum class Role(val mainThemeColor: Color, val backGroundColor: Color, val whoYo
     CIVIL(Red500, Grey200, R.string.civil, R.string.civil_desc, R.drawable.mafia1),
 
     DOCTOR(Red500, Grey200, R.string.medic, R.string.medic_desc, R.drawable.mafia1),
-    EMPTY(Red500, Grey200, R.string.medic, R.string.medic_desc, R.drawable.mafia1),
+    EMPTY(Red500, Grey200,R.string.empty , R.string.medic_desc, R.drawable.mafia1);
+
+    companion object {
+        private val values = values()
+
+        fun random(): Role {
+            return values.random()
+        }
+    }
 }

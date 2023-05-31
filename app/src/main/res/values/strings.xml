@@ -3,6 +3,7 @@
     <string name="mafia">MAFIA</string>
     <string name="civil">CIVIL</string>
     <string name="medic">MEDIC</string>
+    <string name="empty">XXXX</string>
     <string name="mafia_desc">Siema to ja</string>
     <string name="civil_desc">Siema to nie ja</string>
     <string name="medic_desc">Siema to on</string>

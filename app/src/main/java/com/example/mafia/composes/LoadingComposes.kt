@@ -1,5 +1,6 @@
 package com.example.mafia.composes
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -26,15 +26,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.mafia.R
+import com.example.mafia.elements.Role
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun LoadingCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
@@ -80,7 +82,25 @@ fun LoadingCompose(
                     contentScale = ContentScale.FillBounds
                 )
             }
-            MafiaCompose()
+            when(gameViewModel.game.player!!.role){
+                Role.MAFIA -> {
+                    MafiaCompose()
+                }
+                Role.DETECTIVE -> {
+                    DetectiveCompose()
+                }
+                Role.DOCTOR -> {
+                    MedicCompose()
+                }
+                Role.CIVIL -> {
+                    CivilCompose()
+                }
+                Role.EMPTY -> {
+
+                }
+                null -> Log.println(Log.ASSERT,"Test", "Pusta rola")
+            }
+
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier

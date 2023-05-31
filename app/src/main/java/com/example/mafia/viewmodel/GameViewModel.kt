@@ -1,16 +1,19 @@
 package com.example.mafia.viewmodel
 
 import android.util.Log
+import androidx.compose.animation.core.snap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
-import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.firebaseData.Game
 import com.example.mafia.firebaseData.dbPlayer
+import com.example.mafia.navigation.NavigationRoutes
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +31,7 @@ class GameViewModel : ViewModel() {
     private var assignFlag = false
 
 
-    fun asssignListener(){
+    fun assignListener(){
         val lobbyRef = gamesReference.child(game.pin!!)
         assignFlag = true
         Log.println(Log.ASSERT,"Test", "Listener on ${game.pin}")
@@ -37,10 +40,30 @@ class GameViewModel : ViewModel() {
         lobbyRef.addChildEventListener(childEventListenerOnGame)
     }
 
+    fun assignListenerForGameStatus(navController: NavController){
+        val gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
+
+        gameStatusReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                when(snapshot.value){
+                    "started" -> {
+                        navController.navigate(NavigationRoutes.Loading.route)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
     fun createGame(waiting: MutableState<Boolean>, gamePin: MutableState<String>){
         game = Game()
         playerList.clear()
         assignFlag = false
+        ifIamAdmin.value = true
 
         val databaseReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
 
@@ -80,7 +103,7 @@ class GameViewModel : ViewModel() {
         playerList.clear()
 
         if(!assignFlag) {
-            asssignListener()
+            assignListener()
         }
     }
 
@@ -100,7 +123,7 @@ class GameViewModel : ViewModel() {
         game.player = player
 
         if(!assignFlag) {
-            asssignListener()
+            assignListener()
         }
     }
 
@@ -114,6 +137,14 @@ class GameViewModel : ViewModel() {
             pinsReference.child(game.pin!!).setValue(true)
         }
         assignFlag = false
+    }
+
+    fun startGameForAll(){
+        gamesReference.child(game.pin!!).child("game_status").setValue("Started")
+    }
+    fun assignRole(){
+        game.player!!.role = Role.random()
+        gamesReference.child(game.pin!!).child(game.player!!.nickname!!).updateChildren(mapOf("role" to game.player!!.role.toString()))
     }
 
     fun resetPinNumbers(){
@@ -175,6 +206,9 @@ class GameViewModel : ViewModel() {
                     for(player in playerList){
                         if(player.nickname == playerChanged.nickname){
                             player.isAdmin = playerChanged.isAdmin
+                            player.role = playerChanged.role
+                            player.lifeStatus = playerChanged.lifeStatus
+
                             ifIamAdmin.value = playerChanged.isAdmin!!
                         }
                     }

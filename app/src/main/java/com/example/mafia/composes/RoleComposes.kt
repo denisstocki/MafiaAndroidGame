@@ -62,7 +62,7 @@ fun DetectiveCompose(
         }
     }
 }
-
+@Preview
 @Composable
 fun MedicCompose(
 
@@ -101,7 +101,7 @@ fun MedicCompose(
         }
     }
 }
-
+@Preview
 @Composable
 fun MafiaCompose(
 
@@ -141,6 +141,7 @@ fun MafiaCompose(
     }
 }
 
+@Preview
 @Composable
 fun CivilCompose(
 

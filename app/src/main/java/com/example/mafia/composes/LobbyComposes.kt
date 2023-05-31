@@ -131,6 +131,8 @@ fun LobbyCompose(
                     .background(backgroundColor)
                     .clickable {
                         if(myPlayerIsAdmin.value) {
+                            gameViewModel.assignRole()
+                            gameViewModel.startGameForAll()
                             navController.navigate(NavigationRoutes.Loading.route)
                         }
                     }

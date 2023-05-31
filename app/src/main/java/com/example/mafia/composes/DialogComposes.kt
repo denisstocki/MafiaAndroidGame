@@ -259,6 +259,7 @@ fun CreateCompose(
                     .fillMaxWidth()
                     .clickable {
                         gameViewModel.createPlayer(nickame.text,true)
+                        gameViewModel.assignListenerForGameStatus(navController)
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )
@@ -417,6 +418,7 @@ fun JoinCompose(
                     .clickable {
                         gameViewModel.joinToGame(gamePin = gamePin.text)
                         gameViewModel.createPlayer(nickame.text)
+                        gameViewModel.assignListenerForGameStatus(navController)
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )
