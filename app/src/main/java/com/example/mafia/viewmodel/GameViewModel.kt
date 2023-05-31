@@ -156,6 +156,7 @@ class GameViewModel : ViewModel() {
     fun startGameForAll(){
         gamesReference.child(game.pin!!).child("game_status").setValue("Started")
     }
+
     fun assignRoles(){
         game.player!!.role = Role.random()
         var mafiaAmount = if(playerList.size/3 < 1) 1 else playerList.size/3
@@ -375,6 +376,9 @@ class GameViewModel : ViewModel() {
 
                             ifIamAdmin.value = playerChanged.isAdmin!!
                         }
+                    }
+                    if(playerChanged.nickname == game.player!!.nickname){
+                        game.player!!.role = playerChanged.role
                     }
 
                     if(playerChanged.nickname == game.player!!.nickname){

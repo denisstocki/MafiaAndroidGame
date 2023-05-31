@@ -127,8 +127,8 @@ fun LobbyCompose(
                     .clickable {
                         if(myPlayerIsAdmin.value) {
                             gameViewModel.assignRoles()
+                            gameViewModel.assignListenerForGameStatus(navController)
                             gameViewModel.startGameForAll()
-                            navController.navigate(NavigationRoutes.Loading.route)
                         }
                     }
             ) {
