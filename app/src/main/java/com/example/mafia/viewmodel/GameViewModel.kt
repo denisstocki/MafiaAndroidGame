@@ -27,7 +27,7 @@ class GameViewModel : ViewModel() {
     var game = Game()
     private val gamesReference = FirebaseDatabase.getInstance().getReference("games")
     private val pinsReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
-    private lateinit var gameStatusReference: DatabaseReference
+//    private lateinit var gameStatusReference: DatabaseReference
 
     var playerList = mutableStateListOf<dbPlayer>()
     var ifIamAdmin: MutableState<Boolean> = mutableStateOf(false)
@@ -47,16 +47,16 @@ class GameViewModel : ViewModel() {
     }
 
     fun assignListenerForGameStatus(navController: NavController){
-        gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
+        val gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
 
         gameStatusListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 when(snapshot.value){
-                    GameStatus.STARTED -> {
+                    GameStatus.STARTED.toString() -> {
                         game.status = GameStatus.STARTED
                         navController.navigate(NavigationRoutes.Loading.route)
                     }
-                    GameStatus.NIGHT_VOTING -> {
+                    GameStatus.NIGHT_VOTING.toString() -> {
                         game.status = GameStatus.NIGHT_VOTING
                         navController.navigate(NavigationRoutes.Voting.route)
                     }
@@ -162,10 +162,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun startGameForAll(){
-        gameStatusReference.setValue(GameStatus.STARTED)
+        gamesReference.child(game.pin!!).child("game_status").setValue(GameStatus.STARTED)
     }
     fun beginVoting() {
-        gameStatusReference.setValue(GameStatus.NIGHT_VOTING)
+        gamesReference.child(game.pin!!).child("game_status").setValue(GameStatus.NIGHT_VOTING)
     }
 
     fun playerVote(playerToVote: dbPlayer){
@@ -370,7 +370,7 @@ class GameViewModel : ViewModel() {
 
                 } else {
                     // Dane gracza są niekompletne
-                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE ADDED")
                 }
             }
         }
@@ -400,6 +400,7 @@ class GameViewModel : ViewModel() {
                             player.isAdmin = playerChanged.isAdmin
                             player.role = playerChanged.role
                             player.lifeStatus = playerChanged.lifeStatus
+                            player.voteCounter = playerChanged.voteCounter
 
                             ifIamAdmin.value = playerChanged.isAdmin!!
                         }
@@ -408,14 +409,10 @@ class GameViewModel : ViewModel() {
                         game.player!!.role = playerChanged.role
                     }
 
-                    if(playerChanged.nickname == game.player!!.nickname){
-                        game.player!!.role = playerChanged.role
-                    }
-
                     Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname} ${playerChanged.isAdmin}")
                 } else {
                     // Dane gracza są niekompletne
-                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE CHANGED")
                 }
             }
         }
@@ -464,7 +461,7 @@ class GameViewModel : ViewModel() {
                 }
                 else {
                     // Dane gracza są niekompletne
-                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
+                    Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE REMOVED")
                 }
             }
         }
