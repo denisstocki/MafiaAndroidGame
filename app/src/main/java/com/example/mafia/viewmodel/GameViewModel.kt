@@ -27,7 +27,7 @@ class GameViewModel : ViewModel() {
     var game = Game()
     private val gamesReference = FirebaseDatabase.getInstance().getReference("games")
     private val pinsReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
-//    private lateinit var gameStatusReference: DatabaseReference
+    private lateinit var gameStatusReference: DatabaseReference
 
     var playerList = mutableStateListOf<dbPlayer>()
     var ifIamAdmin: MutableState<Boolean> = mutableStateOf(false)
@@ -47,7 +47,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun assignListenerForGameStatus(navController: NavController){
-        val gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
+        gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
 
         gameStatusListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -162,10 +162,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun startGameForAll(){
-        gamesReference.child(game.pin!!).child("game_status").setValue(GameStatus.STARTED)
+        gameStatusReference.setValue(GameStatus.STARTED)
     }
     fun beginVoting() {
-        gamesReference.child(game.pin!!).child("game_status").setValue(GameStatus.NIGHT_VOTING)
+        gameStatusReference.setValue(GameStatus.NIGHT_VOTING)
     }
 
     fun playerVote(playerToVote: dbPlayer){
