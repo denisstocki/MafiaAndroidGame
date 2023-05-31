@@ -194,6 +194,7 @@ fun StartCompose(
                     waitingPin,
                     gamePin,
                 ) {
+                    gameViewModel.unReserveGame(gamePin.value)
                     newGamePressed = false
                 }
             }

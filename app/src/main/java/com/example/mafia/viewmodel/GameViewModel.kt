@@ -5,6 +5,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -19,8 +20,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.concurrent.CompletableFuture
 
 class GameViewModel : ViewModel() {
+    // TODO: sprawdzenie nickname i pinu w joinie
+    // TODO: przydzielenie roli po nacisnieciu start w lobby
+    // TODO: odpowiednie czasy trwania ustawic
     var game = Game()
     private val gamesReference = FirebaseDatabase.getInstance().getReference("games")
     private val pinsReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
@@ -108,6 +113,12 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    fun unReserveGame(pin: String) {
+        val pin = pinsReference.child(pin)
+
+        pin.setValue(true)
+    }
+
 
     fun createPlayer(nickname: String, isAdmin:Boolean = false) {
         val player = dbPlayer(nickname,Role.EMPTY,LifeStatus.ALIVE,isAdmin)
@@ -159,6 +170,109 @@ class GameViewModel : ViewModel() {
         }
         databaseReference.setValue(dataMap)
     }
+
+    fun gameIncludesNickname(pin: String, nickname: String): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
+
+        gamesReference.child(pin).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var isIncluded = false
+                Log.i("ELOELOELO", "przed callback")
+                Log.i("ELOELOELO", "a to wynik: $isIncluded")
+                dataSnapshot.children.forEach { childSnap ->
+                    Log.i("ELOELOELO", "przechodze ${childSnap}")
+                    Log.i("ELOELOELO", "przechodze ${childSnap.key}")
+                    Log.i("ELOELOELO", "przechodze ${pin}")
+
+                    if (childSnap.key.toString() == nickname) {
+                        Log.i("ELOELOELO", "znalazlem")
+
+                        isIncluded = true
+                    }
+                }
+
+                completableFuture.complete(isIncluded)
+                Log.i("ELOELOELO", "po callback")
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                completableFuture.completeExceptionally(databaseError.toException())
+            }
+        })
+        Log.i("ELOELOELO", "nickname finished")
+
+        return completableFuture
+    }
+
+    fun gameIsStarted(pin: String): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
+        Log.i("ELOELOELO", "przechodze ${pin}")
+
+
+        gamesReference.child(pin).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var isStarted = false
+                Log.i("ELOELOELO", "przed callback empty")
+                Log.i("ELOELOELO", "snapiiiii ${dataSnapshot}")
+                val dataSnapshotGameStatus = dataSnapshot.child("game_status")
+                val gameStatusValue = dataSnapshotGameStatus.getValue(String::class.java)
+
+                if (gameStatusValue == "Started") {
+                    isStarted = true
+                }
+                Log.i("ELOELOELO", "a to wynik empty: $isStarted")
+
+                completableFuture.complete(isStarted)
+                Log.i("ELOELOELO", "po callback empty")
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                completableFuture.completeExceptionally(databaseError.toException())
+            }
+        })
+        Log.i("ELOELOELO", "empty finished")
+
+        return completableFuture
+    }
+
+    fun gameIsEmpty(pin: String): CompletableFuture<Boolean> {
+        val completableFuture = CompletableFuture<Boolean>()
+        Log.i("ELOELOELO", "przechodze ${pin}")
+
+
+        gamesReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var isEmpty = true
+                Log.i("ELOELOELO", "przed callback empty")
+                dataSnapshot.children.forEach { childSnap ->
+                    Log.i("ELOELOELO", "przechodze ${childSnap}")
+                    Log.i("ELOELOELO", "przechodze ${childSnap.key}")
+                    Log.i("ELOELOELO", "przechodze ${pin}")
+
+                    if (childSnap.key.toString() == pin) {
+                        Log.i("ELOELOELO", "znalazlem")
+
+                        isEmpty = false
+                    }
+                }
+                Log.i("ELOELOELO", "a to wynik empty: $isEmpty")
+
+                completableFuture.complete(isEmpty)
+                Log.i("ELOELOELO", "po callback empty")
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                completableFuture.completeExceptionally(databaseError.toException())
+            }
+        })
+        Log.i("ELOELOELO", "empty finished")
+
+        return completableFuture
+    }
+
 
     private val childEventListenerOnGame = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

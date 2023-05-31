@@ -1,5 +1,6 @@
 package com.example.mafia.composes
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -258,8 +259,7 @@ fun CreateCompose(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        gameViewModel.createPlayer(nickame.text,true)
-                        gameViewModel.assignListenerForGameStatus(navController)
+                        gameViewModel.createPlayer(nickame.text, true)
                         navController.navigate(NavigationRoutes.Lobby.route)
                     }
             )
@@ -278,8 +278,8 @@ fun JoinCompose(
     val heightLower = (h - w * 2 / 6) * 2 / 13
 
     val blockedCharacters = setOf(' ', '-', ',', '.', '\n')
-    var gamePin: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    var nickame: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var gamePin by remember { mutableStateOf(TextFieldValue("")) }
+    var nickame by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
         modifier = Modifier
@@ -416,10 +416,44 @@ fun JoinCompose(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        gameViewModel.joinToGame(gamePin = gamePin.text)
-                        gameViewModel.createPlayer(nickame.text)
-                        gameViewModel.assignListenerForGameStatus(navController)
-                        navController.navigate(NavigationRoutes.Lobby.route)
+                        var temp = gamePin
+                        gamePin = TextFieldValue("Wait...")
+                        Log.i("ELOELOELO", "jestem przed gameIsEmpty")
+                        gameViewModel.gameIsEmpty(temp.text).thenAccept { isEmpty ->
+                            Log.i("ELOELOELO", "a nie zaczekalem sobie")
+                            if (isEmpty) {
+                                gamePin = TextFieldValue("Err1")
+                            } else {
+                                gamePin = temp
+                                temp = nickame
+                                nickame = TextFieldValue("Wait...")
+                                Log.i("ELOELOELO", "jestem przed gameIncludesNickame")
+
+                                gameViewModel.gameIncludesNickname(gamePin.text, temp.text).thenAccept { isIncluded ->
+                                    Log.i("ELOELOELO", "a nie zaczekalem sobie nickname")
+
+                                    if (isIncluded) {
+                                        nickame = TextFieldValue("Used")
+                                    } else {
+                                        nickame = temp
+                                        temp = gamePin
+                                        gamePin = TextFieldValue("Wait...")
+                                        gameViewModel.gameIsStarted(temp.text).thenAccept { isStarted ->
+                                            Log.i("ELOELOELO", "a nie zaczekalem sobie nickname")
+
+                                            if (isStarted) {
+                                                gamePin = TextFieldValue("Err2")
+                                            } else {
+                                                gamePin = temp
+                                                gameViewModel.joinToGame(gamePin = gamePin.text)
+                                                gameViewModel.createPlayer(nickame.text)
+                                                navController.navigate(NavigationRoutes.Lobby.route)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
             )
         }
