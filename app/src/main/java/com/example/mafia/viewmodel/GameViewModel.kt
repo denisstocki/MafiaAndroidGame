@@ -6,26 +6,28 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
+import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.firebaseData.Game
 import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.navigation.NavigationRoutes
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.concurrent.CompletableFuture
 
 class GameViewModel : ViewModel() {
-    // TODO: sprawdzenie nickname i pinu w joinie
-    // TODO: przydzielenie roli po nacisnieciu start w lobby
     // TODO: odpowiednie czasy trwania ustawic
     var game = Game()
     private val gamesReference = FirebaseDatabase.getInstance().getReference("games")
     private val pinsReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
+    private lateinit var gameStatusReference: DatabaseReference
 
     var playerList = mutableStateListOf<dbPlayer>()
     var ifIamAdmin: MutableState<Boolean> = mutableStateOf(false)
@@ -45,13 +47,18 @@ class GameViewModel : ViewModel() {
     }
 
     fun assignListenerForGameStatus(navController: NavController){
-        val gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
+        gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
 
         gameStatusListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 when(snapshot.value){
-                    "Started" -> {
+                    GameStatus.STARTED -> {
+                        game.status = GameStatus.STARTED
                         navController.navigate(NavigationRoutes.Loading.route)
+                    }
+                    GameStatus.NIGHT_VOTING -> {
+                        game.status = GameStatus.NIGHT_VOTING
+                        navController.navigate(NavigationRoutes.Voting.route)
                     }
                 }
             }
@@ -127,7 +134,8 @@ class GameViewModel : ViewModel() {
             "nickname" to player.nickname.toString(),
             "role" to player.role.toString(),
             "lifeStatus" to player.lifeStatus.toString(),
-            "isAdmin" to player.isAdmin
+            "isAdmin" to player.isAdmin,
+            "voteCounter" to player.voteCounter
         )
 
         gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(playerValues)
@@ -154,7 +162,18 @@ class GameViewModel : ViewModel() {
     }
 
     fun startGameForAll(){
-        gamesReference.child(game.pin!!).child("game_status").setValue("Started")
+        gameStatusReference.setValue(GameStatus.STARTED)
+    }
+    fun beginVoting() {
+        gameStatusReference.setValue(GameStatus.NIGHT_VOTING)
+    }
+
+    fun playerVote(playerToVote: dbPlayer){
+        for(player in playerList){
+            if(player.nickname == playerToVote.nickname){
+                gamesReference.child(game.pin!!).child(player.nickname!!).child("voteCounter").setValue((player.voteCounter + 1))
+            }
+        }
     }
 
     fun assignRoles(){
@@ -332,17 +351,20 @@ class GameViewModel : ViewModel() {
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
+                val voteCounter = it["voteCounter"] as? Int
 
-                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val player = dbPlayer(
                         nickname,
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
-                        isAdmin
+                        isAdmin,
+                        voteCounter
                     )
-                    // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
+
                     playerList.add(player)
                     Log.println(Log.ASSERT,"Test", "added ${player.nickname}")
+
                 } else {
                     // Dane gracza są niekompletne
                     Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE")
@@ -358,13 +380,15 @@ class GameViewModel : ViewModel() {
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
+                val voteCounter = it["voteCounter"] as? Int
 
-                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val playerChanged = dbPlayer(
                         nickname,
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
-                        isAdmin
+                        isAdmin,
+                        voteCounter
                     )
 
                     // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
@@ -402,13 +426,15 @@ class GameViewModel : ViewModel() {
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
+                val voteCounter = it["voteCounter"] as? Int
 
-                if (nickname != null && role != null && lifeStatus != null && isAdmin != null) {
+                if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val playerToRemove = dbPlayer(
                         nickname,
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
-                        isAdmin
+                        isAdmin,
+                        voteCounter
                     )
 
                     // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
@@ -441,10 +467,7 @@ class GameViewModel : ViewModel() {
         }
 
         override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            // Przeniesienie gracza w lobby
-            val movedPlayer = snapshot.getValue(Player::class.java)
-            Log.println(Log.ASSERT,"Test", "MOVED PLAYER")
-            // Wykonaj odpowiednie akcje na podstawie przeniesienia gracza
+
         }
 
         override fun onCancelled(error: DatabaseError) {

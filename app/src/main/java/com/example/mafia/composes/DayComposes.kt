@@ -1,28 +1,19 @@
 package com.example.mafia.composes
 
-import android.view.View
-import android.view.Window
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -37,11 +28,13 @@ import com.example.mafia.R
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun DayCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
     val time = 25000f
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
@@ -66,7 +59,7 @@ fun DayCompose(
     LaunchedEffect(Unit) {
         textColor.animateTo(Red500, animationSpec = tween(time.toInt(), easing = LinearEasing))
         delay(1000)
-        navController.navigate(NavigationRoutes.Voting.route)
+        gameViewModel.beginVoting()
     }
 
     Box(

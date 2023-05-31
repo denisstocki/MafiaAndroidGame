@@ -10,5 +10,6 @@ data class dbPlayer(
     var nickname: String? = null,
     var role: Role? = null,
     var lifeStatus: LifeStatus? = LifeStatus.ALIVE,
-    var isAdmin: Boolean? = false
+    var isAdmin: Boolean? = false,
+    var voteCounter: Int = 0
 )

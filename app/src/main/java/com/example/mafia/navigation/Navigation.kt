@@ -37,11 +37,11 @@ fun Navigation(context: Context, gameViewModel: GameViewModel)
         }
 
         composable(route = NavigationRoutes.Day.route) {
-            DayCompose(navController = navController)
+            DayCompose(navController = navController, gameViewModel)
         }
 
         composable(route = NavigationRoutes.Voting.route) {
-            VotingCompose(navController = navController)
+            VotingCompose(navController = navController, gameViewModel)
         }
 
         composable(route = NavigationRoutes.Death.route) {

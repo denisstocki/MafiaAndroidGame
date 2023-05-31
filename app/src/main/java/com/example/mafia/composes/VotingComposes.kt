@@ -1,9 +1,6 @@
 package com.example.mafia.composes
 
-import android.widget.Space
-import androidx.compose.animation.Animatable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,33 +18,77 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.example.mafia.elements.GameStatus
+import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
+import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility
 import com.example.mafia.elements.deathNote
+import com.example.mafia.firebaseData.dbPlayer
 import com.example.mafia.navigation.NavigationRoutes
-import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 
 @Composable
 fun VotingCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
+    val playerList = gameViewModel.playerList
+
+    if(gameViewModel.game.player!!.lifeStatus == LifeStatus.ALIVE) { // VOTING SCREEN ONLY FOR ALIVE PEOPLE
+        when (gameViewModel.game.status){
+
+            GameStatus.NIGHT_VOTING -> { // VOTING FOR NIGHT
+                when (gameViewModel.game.player!!.role) {
+                    Role.MAFIA -> { // ALL EXCEPT MAFIA PLAYERS
+                        for (player in gameViewModel.playerList) {
+                            if ( player.lifeStatus == LifeStatus.ALIVE && player.role != Role.MAFIA) {
+                                playerList.add(player)
+                            }
+                        }
+                    }
+                    Role.DOCTOR -> {
+                        for (player in gameViewModel.playerList) {
+                            playerList.add(player)
+                        }
+                    }
+                    Role.DETECTIVE -> {
+                        for (player in gameViewModel.playerList) {
+                            playerList.add(player)
+                        }
+                    }
+                    else -> {}
+                }
+            }
+
+            GameStatus.DAY_VOTING -> { // VOTING FOR DAY
+                for (player in gameViewModel.playerList) {
+                    if ( player.lifeStatus == LifeStatus.ALIVE && player.role != Role.MAFIA) {
+                        playerList.add(player)
+                    }
+                }
+            }
+
+            else -> {}
+        }
+
+    }
+    else {
+        TODO() // dla martwych ekran
+    }
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
 
     val used = remember { Animatable(0f) }
+
     var voted: Boolean by remember {
         mutableStateOf(false)
     }
@@ -129,10 +170,6 @@ fun VotingCompose(
                 }
             }
 
-            val playerList: ArrayList<Player> by remember {
-                mutableStateOf(Utility.playerList)
-            }
-
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(height - 210.dp)
@@ -148,7 +185,7 @@ fun VotingCompose(
                             }
                     ) {
                         items(playerList) { player ->
-                            player.votePlayer()
+                            gameViewModel.playerVote(player)
                         }
                     }
 
@@ -161,4 +198,11 @@ fun VotingCompose(
 
         }
     }
+}
+
+@Composable
+fun votingForDead(
+
+){
+
 }
