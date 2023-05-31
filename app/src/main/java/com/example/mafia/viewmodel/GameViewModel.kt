@@ -128,14 +128,14 @@ class GameViewModel : ViewModel() {
 
 
     fun createPlayer(nickname: String, isAdmin:Boolean = false) {
-        val player = dbPlayer(nickname,Role.EMPTY,LifeStatus.ALIVE,isAdmin)
+        val player = dbPlayer(nickname,Role.EMPTY,LifeStatus.ALIVE,isAdmin, 0)
 
         val playerValues = mapOf(
             "nickname" to player.nickname.toString(),
             "role" to player.role.toString(),
             "lifeStatus" to player.lifeStatus.toString(),
             "isAdmin" to player.isAdmin,
-            "voteCounter" to player.voteCounter
+            "voteCounter" to player.voteCounter,
         )
 
         gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(playerValues)
@@ -171,7 +171,7 @@ class GameViewModel : ViewModel() {
     fun playerVote(playerToVote: dbPlayer){
         for(player in playerList){
             if(player.nickname == playerToVote.nickname){
-                gamesReference.child(game.pin!!).child(player.nickname!!).child("voteCounter").setValue((player.voteCounter + 1))
+                gamesReference.child(game.pin!!).child(player.nickname!!).child("voteCounter").setValue((player.voteCounter!! + 1))
             }
         }
     }
@@ -346,12 +346,15 @@ class GameViewModel : ViewModel() {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val playerData = snapshot.value as? Map<*, *>
 
+
             playerData?.let {
                 val nickname = it["nickname"] as? String
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
-                val voteCounter = it["voteCounter"] as? Int
+                val voteCounter = it["voteCounter"] as? Number
+
+                Log.println(Log.ASSERT,"Test", "$nickname $role $lifeStatus $isAdmin $voteCounter")
 
                 if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val player = dbPlayer(
@@ -359,7 +362,7 @@ class GameViewModel : ViewModel() {
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
                         isAdmin,
-                        voteCounter
+                        voteCounter.toInt(),
                     )
 
                     playerList.add(player)
@@ -380,7 +383,7 @@ class GameViewModel : ViewModel() {
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
-                val voteCounter = it["voteCounter"] as? Int
+                val voteCounter = it["voteCounter"] as? Number
 
                 if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val playerChanged = dbPlayer(
@@ -388,7 +391,7 @@ class GameViewModel : ViewModel() {
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
                         isAdmin,
-                        voteCounter
+                        voteCounter.toInt()
                     )
 
                     // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
@@ -426,7 +429,7 @@ class GameViewModel : ViewModel() {
                 val role = it["role"] as? String
                 val lifeStatus = it["lifeStatus"] as? String
                 val isAdmin = it["isAdmin"] as? Boolean
-                val voteCounter = it["voteCounter"] as? Int
+                val voteCounter = it["voteCounter"] as? Number
 
                 if (nickname != null && role != null && lifeStatus != null && isAdmin != null && voteCounter != null) {
                     val playerToRemove = dbPlayer(
@@ -434,7 +437,7 @@ class GameViewModel : ViewModel() {
                         Role.valueOf(role),
                         LifeStatus.valueOf(lifeStatus),
                         isAdmin,
-                        voteCounter
+                        voteCounter.toInt()
                     )
 
                     // Wykonaj odpowiednie akcje na podstawie odczytanych danych gracza
