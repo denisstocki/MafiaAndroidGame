@@ -92,47 +92,46 @@ class Player(val nickname: String, val role: Role) {
 @Composable
 fun showPlayer(
     nickname: String,
-    size: Dp = 200.dp
+    height: Dp
 ) {
     var imageForIcon : Int
     var scale: Float
     var padding: Dp
+
     if (nickname.last() == 'A'){
         imageForIcon = R.drawable.hat3
-        scale = 1.20f
-        padding = 0.dp
     }
     else{
         imageForIcon = R.drawable.hat4
-        scale = 1.0f
-        padding = 8.dp
     }
 
     Box(modifier = Modifier
-        .size(size)
-        .padding(end = 8.dp)) {
-        Image(painter = painterResource(id = R.drawable.frame6), contentDescription = null, modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Red500
-            ),
+        .fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.frame6),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Red500),
             contentScale = ContentScale.FillBounds)
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(height / 10),
+            verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
                 painter = painterResource(id = imageForIcon),
                 contentDescription = null,
                 modifier = Modifier
-                    .size((size / 2) * scale)
-                    .padding(top = 20.dp / scale / scale)
+                    .size(height / 3),
+                contentScale = ContentScale.FillBounds
             )
             Text(
                 text = nickname,
-                modifier = Modifier.padding(top = padding),
-                style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 18.sp),
+                style = TextStyle(fontWeight = FontWeight.Normal, fontSize = (height / 4).value.sp),
                 fontFamily = FontFamily(Font(R.font.anton_regular))
             )
         }
