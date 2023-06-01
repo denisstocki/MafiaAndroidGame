@@ -82,7 +82,7 @@ fun VotingCompose(
 
     }
     else {
-        TODO() // dla martwych ekran
+        DeathCompose(navController = navController, gameViewModel = gameViewModel)
     }
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
@@ -99,7 +99,7 @@ fun VotingCompose(
 //        navController.navigate(NavigationRoutes.Death.route)
         gameViewModel.finishVote(Role.MAFIA)
         gameViewModel.finishVote(Role.DOCTOR)
-        gameViewModel.finishVote(Role.DETECTIVE)
+//        gameViewModel.finishVote(Role.DETECTIVE)
     }
 
     Box(

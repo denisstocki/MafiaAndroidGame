@@ -177,6 +177,7 @@ class GameViewModel : ViewModel() {
                 }
             }
         }
+
         for (player in playerList){
             if(player.nickname == votedNickname){
                 if(role == Role.DOCTOR){
@@ -188,7 +189,7 @@ class GameViewModel : ViewModel() {
                 gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(mapOf("lifeStatus" to player.lifeStatus.toString()))
             }
         }
-        if(role == Role.DETECTIVE){
+        if(role == Role.DOCTOR){
             gameStatusReference.setValue(GameStatus.DAY_TALK)
         }
     }
@@ -269,7 +270,8 @@ class GameViewModel : ViewModel() {
         Log.println(Log.ASSERT,"Test", "Usuwam ${game.player!!.nickname!!}")
         gamesReference.child(game.pin!!).child(game.player!!.nickname!!).removeValue()
         gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
-        gamesReference.child(game.pin!!).child("game_status").removeEventListener(gameStatusListener)
+//        gamesReference.child(game.pin!!).child("game_status").removeEventListener(gameStatusListener)
+
 
         if(playerList.size == 1){
             gamesReference.child(game.pin!!).removeValue()
@@ -444,6 +446,7 @@ class GameViewModel : ViewModel() {
 
                     Log.println(Log.ASSERT,"Test", "player removed${playerToRemove.nickname}")
                 }
+
                 else {
                     // Dane gracza są niekompletne
                     Log.println(Log.ASSERT,"Test", "NIEKOMPLETNE REMOVED")

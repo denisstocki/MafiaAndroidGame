@@ -68,7 +68,7 @@ fun DeathCompose(
 
     LaunchedEffect(Unit) {
         time.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 10000, easing = LinearEasing))
-        navController.navigate(NavigationRoutes.Day.route)
+        navController.navigate(NavigationRoutes.Win.route)
     }
 
     Box(
@@ -100,7 +100,7 @@ fun DeathCompose(
                 val deadInfoText = if (killedPlayer.value == gameViewModel.game.player!!.nickname) {
                     "YOU ARE"
                 } else if(killedPlayer.value == "") {
-                        "NO ONE IS"
+                        "NOBODY IS"
                     }
                 else{
                     "${killedPlayer.value} IS"
@@ -113,6 +113,7 @@ fun DeathCompose(
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.anton_regular)),
                 )
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "DEAD",
                     color = Red500,
