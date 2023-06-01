@@ -99,7 +99,7 @@ fun DeathCompose(
             )
             Box(
                 modifier = Modifier
-                    .size(width = 300.dp, height = 300.dp),
+                    .size(width = 300.dp, height = 330.dp),
                 contentAlignment = Alignment.Center
             ) {
                 val killedPlayer = gameViewModel.latestKilled
@@ -119,7 +119,7 @@ fun DeathCompose(
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.anton_regular)),
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "DEAD",
                     color = Red500,

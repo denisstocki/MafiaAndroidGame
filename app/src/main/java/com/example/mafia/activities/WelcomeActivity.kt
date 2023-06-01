@@ -17,7 +17,6 @@ import com.example.mafia.navigation.Navigation
 import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.MafiaTheme
 import com.example.mafia.viewmodel.GameViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.database.FirebaseDatabase
 
 class WelcomeActivity : ComponentActivity() {
@@ -30,7 +29,6 @@ class WelcomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-
             ChangeNavigationBarColor(color = Black200)
 
             MafiaTheme{

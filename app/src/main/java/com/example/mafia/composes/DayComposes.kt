@@ -34,9 +34,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun DayCompose(
     navController: NavController,
-    gameViewModel: GameViewModel
+    gameViewModel: GameViewModel,
+    time: Float = 10*1000f
 ) {
-    val time = 10000f
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
     val remainingTime = remember { Animatable(time) }

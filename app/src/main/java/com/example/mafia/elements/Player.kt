@@ -2,9 +2,12 @@ package com.example.mafia.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -206,5 +209,46 @@ fun deathNote(
             )
         }
     }
+}
+@Composable
+fun endGamePlayerShow(
+    player: dbPlayer
+) {
+    var imageForIcon : Int
+    if (player.nickname!!.last() == 'a'){
+        imageForIcon = R.drawable.hat3
+    }
+    else{
+        imageForIcon = R.drawable.hat4
+    }
+    Row(modifier = Modifier
+        .padding(all = 8.dp)
+        .wrapContentWidth(align = Alignment.Start)
+    ) {
+        Image(
+            painter = painterResource(imageForIcon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .border(1.5.dp, Red500, CircleShape)
+        )
 
+        Spacer(modifier = Modifier.width(15.dp))
+
+        Column {
+            Text(
+                text = player.nickname!!,
+                color = Red500,
+                fontSize = 25.sp
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = player.role.toString(),
+                color = Color.Gray
+            )
+        }
+    }
 }

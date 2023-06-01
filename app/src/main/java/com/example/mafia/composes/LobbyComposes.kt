@@ -213,7 +213,7 @@ fun LobbyCompose(
                         ) {
                             items(rowPlayers) { player ->
                                 Box(
-                                    modifier = Modifier.size(height / 7)
+                                    modifier = Modifier.size(height / 8)
                                 ) {
                                     showPlayer(player.nickname.toString(), height / 7)
                                 }

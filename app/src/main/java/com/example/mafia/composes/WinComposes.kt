@@ -4,6 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -25,6 +26,7 @@ import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility.playerList
+import com.example.mafia.elements.endGamePlayerShow
 import com.example.mafia.ui.theme.Black500
 import com.example.mafia.ui.theme.Red500
 import com.example.mafia.viewmodel.GameViewModel
@@ -114,18 +116,16 @@ fun WinCompose(
 
             Box(modifier = Modifier
                 .fillMaxWidth()
-                .height(height - 210.dp)
+                .height(height - 100.dp)
                 .background(Color.Transparent),
                 contentAlignment = Alignment.Center) {
 
-                LazyRow(
+                LazyColumn(
                     modifier = Modifier
                         .padding((width - 300.dp) / 2 + 1.dp)
                 ) {
                     items(playerList) { player ->
-                        Player("", Role.EMPTY).votePlayer(player){
-
-                        }
+                        endGamePlayerShow(player = player)
                     }
                 }
             }

@@ -75,6 +75,7 @@ class GameViewModel : ViewModel() {
 
                     GameStatus.NIGHT_VOTING.toString() -> { // NIGHT VOTING
                         game.status = checkForWin (GameStatus.NIGHT_VOTING)
+                        Log.println(Log.ASSERT,"TEST", "NIGHT_VOTING")
 
                         when(game.status) {
                             GameStatus.MAFIA_WIN -> navController.navigate(NavigationRoutes.Win.route)
@@ -85,11 +86,13 @@ class GameViewModel : ViewModel() {
 
                     GameStatus.AFTER_NIGHT.toString() -> { // WHO IS DEAD OR NOT
                         game.status = GameStatus.AFTER_NIGHT
+                        Log.println(Log.ASSERT,"TEST", "AFTER_NIGHT")
                         navController.navigate(NavigationRoutes.Death.route)
                     }
 
                     GameStatus.DAY_TALK.toString() -> { // TIME TO TALK
                         game.status = checkForWin (GameStatus.DAY_TALK)
+                        Log.println(Log.ASSERT,"TEST", "DAY_TALK")
 
                         when(game.status) {
                             GameStatus.MAFIA_WIN -> navController.navigate(NavigationRoutes.Win.route)
@@ -99,12 +102,14 @@ class GameViewModel : ViewModel() {
                     }
 
                     GameStatus.DAY_VOTING.toString() -> { // ALL PLAYERS ARE VOTING
+                        Log.println(Log.ASSERT,"TEST", "DAY_VOTING")
                         game.status = GameStatus.DAY_VOTING
                         navController.navigate(NavigationRoutes.Voting.route)
                     }
 
                     GameStatus.AFTER_DAY.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
                         game.status = GameStatus.AFTER_DAY
+                        Log.println(Log.ASSERT,"TEST", "AFTER_DAY")
                         navController.navigate(NavigationRoutes.Death.route)
                     }
 
@@ -212,7 +217,12 @@ class GameViewModel : ViewModel() {
         voteList.clear()
         voteReference.removeValue()
         assignVotingListener()
-        setGameStatus(GameStatus.NIGHT_VOTING)
+        if(game.status == GameStatus.AFTER_NIGHT){
+            setGameStatus(GameStatus.DAY_TALK)
+        }
+        else if(game.status == GameStatus.AFTER_DAY){
+            setGameStatus(GameStatus.NIGHT_VOTING)
+        }
     }
 
     fun playerVote(playerToVote: dbPlayer){

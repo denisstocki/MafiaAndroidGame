@@ -47,7 +47,7 @@ fun VotingCompose(
                 when (gameViewModel.game.player!!.role) {
                     Role.MAFIA -> { // ALL EXCEPT MAFIA PLAYERS
                         for (player in gameViewModel.playerList) {
-                            if ( player.lifeStatus == LifeStatus.ALIVE ) { //&& player.role != Role.MAFIA
+                            if ( player.lifeStatus == LifeStatus.ALIVE && player.role != Role.MAFIA ) {
                                 playerList.add(player)
                             }
                         }
@@ -93,7 +93,6 @@ fun VotingCompose(
 
     LaunchedEffect(Unit) {
         used.animateTo(1.0f, animationSpec = tween(durationMillis = 20000, easing = LinearEasing))
-//        navController.navigate(NavigationRoutes.Death.route)
         gameViewModel.finishVote(Role.MAFIA)
         gameViewModel.finishVote(Role.DOCTOR)
     }
@@ -125,11 +124,11 @@ fun VotingCompose(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val voting = if(gameViewModel.game.status == GameStatus.NIGHT_VOTING){
-                "NIGHT VOTING"
-            }
-            else if (gameViewModel.game.status == GameStatus.DAY_VOTING) {
+            val voting = if(gameViewModel.game.status == GameStatus.DAY_VOTING){
                 "DAY VOTING"
+            }
+            else if (gameViewModel.game.status == GameStatus.NIGHT_VOTING) {
+                "NIGHT VOTING"
             }
             else {
                 ""
