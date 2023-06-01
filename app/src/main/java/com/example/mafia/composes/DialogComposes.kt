@@ -68,8 +68,8 @@ fun DialogCompose(
             modifier = Modifier
                 .width(dialogWidth)
                 .height(dialogHeight)
-                .clip(RoundedCornerShape(30.dp))
-                .border(width = 5.dp, shape = RoundedCornerShape(30.dp), color = Grey200)
+                .clip(RoundedCornerShape(width / 12))
+                .border(width = 5.dp, shape = RoundedCornerShape(width / 12), color = Grey200)
                 .background(Color.Black)
         ) {
 
@@ -113,12 +113,11 @@ fun CreateCompose(
     waitingPin: MutableState<Boolean>,
     gamePin: MutableState<String>
 ) {
-    val heightBigger = (h - w * 2 / 12) * 3 / 13
-    val heightLower = (h - w * 2 / 12) * 2 / 13
+    val heightBigger = (h - w / 3) * 3 / 13
+    val heightLower = (h - w / 3) * 2 / 13
 
     val blockedCharacters = setOf(' ', '-', ',', '.', '\n')
-    var text: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    var nickame: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var nickname by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -132,7 +131,9 @@ fun CreateCompose(
             height = heightBigger,
             backgroundColor = Color.Black,
             textColor = Red500
-        )
+        ) {
+
+        }
 
         Box(
             modifier = Modifier
@@ -147,7 +148,7 @@ fun CreateCompose(
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
-                        fontSize = 35.sp,
+                        fontSize = (heightLower / 3).value.sp,
                         color = Color.Black
                     ),
                     modifier = Modifier
@@ -161,7 +162,7 @@ fun CreateCompose(
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
-                        fontSize = 35.sp,
+                        fontSize = (heightLower / 3).value.sp,
                         color = Color.Black
                     ),
                     modifier = Modifier
@@ -171,82 +172,36 @@ fun CreateCompose(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightLower)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
+        CustomLabel(
+            text = "NICKNAME",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
         ) {
-            Text(
-                text = "NICKNAME",
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
-                    fontSize = 35.sp,
-                    color = Red500
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-            )
+
         }
-        OutlinedTextField(
-            modifier = Modifier
-                .background(Red500)
-                .fillMaxWidth()
-                .height(heightLower),
-            value = nickame,
-            placeholder = {
-                Text(
-                    text = "....",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fontFamily = FontFamily(Font(R.font.anton_regular)),
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            onValueChange = { txt ->
-                if (txt.text.length <= 12 && txt.text.all { !blockedCharacters.contains(it) }) {
-                    nickame = txt
+
+        CustomTextField(
+            backgroundColor = Red500,
+            textColor = Color.Black,
+            value = nickname,
+            height = heightLower,
+            keyboardType = KeyboardType.Text,
+            onChange = { txt ->
+                if (txt.length <= 12 && txt.all { !blockedCharacters.contains(it) }) {
+                    nickname = txt
                 }
-            },
-            textStyle = TextStyle(
-                fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Bold)),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                color = Color.Black
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                cursorColor = Color.Black
-            )
+            }
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightBigger)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
+        CustomLabel(
+            text = "START",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
         ) {
-            Text(
-                text = "START",
-                color = Red500,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Medium)),
-                    fontSize = 35.sp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        gameViewModel.createPlayer(nickame.text, true)
-                        navController.navigate(NavigationRoutes.Lobby.route)
-                    }
-            )
+            gameViewModel.createPlayer(nickname, true)
+            navController.navigate(NavigationRoutes.Lobby.route)
         }
     }
 }
@@ -256,7 +211,8 @@ fun CustomLabel(
     text: String,
     height: Dp,
     backgroundColor: Color,
-    textColor: Color
+    textColor: Color,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -268,7 +224,10 @@ fun CustomLabel(
         Text(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Transparent),
+                .background(Color.Transparent)
+                .clickable {
+                    onClick()
+                },
             text = text,
             textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
@@ -276,6 +235,46 @@ fun CustomLabel(
             color = textColor
         )
     }
+}
+
+@Composable
+fun CustomTextField(
+    backgroundColor: Color,
+    textColor: Color,
+    value: String,
+    height: Dp,
+    keyboardType: KeyboardType,
+    onChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .background(backgroundColor)
+            .fillMaxWidth()
+            .height(height),
+        value = value,
+        placeholder = {
+            Text(
+                text = "....",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        textStyle = TextStyle(
+            fontFamily = FontFamily(Font(R.font.anton_regular)),
+            fontSize = (height / 3).value.sp,
+            color = textColor,
+            textAlign = TextAlign.Center
+        ),
+        onValueChange = { txt ->
+            onChange(txt)
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = textColor,
+            unfocusedBorderColor = textColor,
+            cursorColor = textColor
+        )
+    )
 }
 
 @Composable
@@ -289,8 +288,8 @@ fun JoinCompose(
     val heightLower = (h - w * 2 / 6) * 2 / 13
 
     val blockedCharacters = setOf(' ', '-', ',', '.', '\n')
-    var gamePin by remember { mutableStateOf(TextFieldValue("")) }
-    var nickame by remember { mutableStateOf(TextFieldValue("")) }
+    var gamePin by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -299,184 +298,93 @@ fun JoinCompose(
             .background(Red500),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightBigger)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "YOUR PIN",
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Bold)),
-                    fontSize = 35.sp,
-                    color = Red500
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-            )
-        }
 
-        OutlinedTextField(
-            modifier = Modifier
-                .background(Red500)
-                .fillMaxWidth()
-                .height(heightLower),
+        CustomLabel(
+            text = "YOUR PIN",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
+        ) {}
+
+        CustomTextField(
+            backgroundColor = Red500,
+            textColor = Color.Black,
             value = gamePin,
-            placeholder = {
-                Text(
-                    text = "....",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fontFamily = FontFamily(Font(R.font.anton_regular)),
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = { txt ->
-                if (txt.text.length <= 4 && txt.text.all { !blockedCharacters.contains(it) }) {
+            height = heightLower,
+            keyboardType = KeyboardType.Number,
+            onChange = { txt ->
+                if (txt.length <= 4 && txt.all { !blockedCharacters.contains(it) }) {
                     gamePin = txt
                 }
-            },
-            textStyle = TextStyle(
-                fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Bold)),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                color = Color.Black
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                cursorColor = Color.Black
-            )
+            }
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightBigger)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "NICKNAME",
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Normal)),
-                    fontSize = 35.sp,
-                    color = Red500
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-            )
-        }
+        CustomLabel(
+            text = "NICKNAME",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
+        ) {}
 
-        OutlinedTextField(
-            modifier = Modifier
-                .background(Red500)
-                .fillMaxWidth()
-                .height(heightLower),
-            value = nickame,
-            placeholder = {
-                Text(
-                    text = "....",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    fontFamily = FontFamily(Font(R.font.anton_regular)),
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            onValueChange = { txt ->
-                if (txt.text.length <= 12 && txt.text.all { !blockedCharacters.contains(it) }) {
-                    nickame = txt
+        CustomTextField(
+            backgroundColor = Red500,
+            textColor = Color.Black,
+            value = nickname,
+            height = heightLower,
+            keyboardType = KeyboardType.Text,
+            onChange = { txt ->
+                if (txt.length <= 12 && txt.all { !blockedCharacters.contains(it) }) {
+                    nickname = txt
                 }
-            },
-            textStyle = TextStyle(
-                fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Bold)),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                color = Color.Black
-            ),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                cursorColor = Color.Black
-            )
+            }
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heightBigger)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
+        CustomLabel(
+            text = "JOIN",
+            height = heightBigger,
+            backgroundColor = Color.Black,
+            textColor = Red500
         ) {
-            Text(
-                text = "JOIN",
-                color = Red500,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.anton_regular, FontWeight.Medium)),
-                    fontSize = 35.sp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        var temp = gamePin
-                        gamePin = TextFieldValue("Wait...")
-                        Log.i("ELOELOELO", "jestem przed gameIsEmpty")
+            var temp = gamePin
+            gamePin = "Wait..."
+            gameViewModel
+                .gameIsEmpty(temp)
+                .thenAccept { isEmpty ->
+                    if (isEmpty) {
+                        gamePin = "Err1"
+                    } else {
+                        gamePin = temp
+                        temp = nickname
+                        nickname = "Wait..."
+
                         gameViewModel
-                            .gameIsEmpty(temp.text)
-                            .thenAccept { isEmpty ->
-                                Log.i("ELOELOELO", "a nie zaczekalem sobie")
-                                if (isEmpty) {
-                                    gamePin = TextFieldValue("Err1")
+                            .gameIncludesNickname(gamePin, temp)
+                            .thenAccept { isIncluded ->
+
+                                if (isIncluded) {
+                                    nickname = "Used"
                                 } else {
-                                    gamePin = temp
-                                    temp = nickame
-                                    nickame = TextFieldValue("Wait...")
-                                    Log.i("ELOELOELO", "jestem przed gameIncludesNickame")
-
+                                    nickname = temp
+                                    temp = gamePin
+                                    gamePin = "Wait..."
                                     gameViewModel
-                                        .gameIncludesNickname(gamePin.text, temp.text)
-                                        .thenAccept { isIncluded ->
-                                            Log.i("ELOELOELO", "a nie zaczekalem sobie nickname")
-
-                                            if (isIncluded) {
-                                                nickame = TextFieldValue("Used")
-                                            } else {
-                                                nickame = temp
-                                                temp = gamePin
-                                                gamePin = TextFieldValue("Wait...")
-                                                gameViewModel
-                                                    .gameIsStarted(temp.text)
-                                                    .thenAccept { isStarted ->
-                                                        Log.i(
-                                                            "ELOELOELO",
-                                                            "a nie zaczekalem sobie nickname"
-                                                        )
+                                        .gameIsStarted(temp)
+                                        .thenAccept { isStarted ->
 
                                             if (isStarted) {
-                                                gamePin = TextFieldValue("Err2")
+                                                gamePin = "Err2"
                                             } else {
                                                 gamePin = temp
-                                                gameViewModel.joinToGame(gamePin = gamePin.text)
-                                                gameViewModel.createPlayer(nickame.text)
+                                                gameViewModel.joinToGame(gamePin = gamePin)
+                                                gameViewModel.createPlayer(nickname)
                                                 gameViewModel.assignListenerForGameStatus(navController)
                                                 navController.navigate(NavigationRoutes.Lobby.route)
                                             }
                                         }
-                                    }
                                 }
                             }
-                        }
                     }
-            )
+                }
         }
     }
 }
