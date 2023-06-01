@@ -93,7 +93,7 @@ fun DeathCompose(
             )
             Box(
                 modifier = Modifier
-                    .size(220.dp),
+                    .size(width = 300.dp, height = 300.dp),
                 contentAlignment = Alignment.Center
             ) {
                 val killedPlayer = gameViewModel.latestKilled
