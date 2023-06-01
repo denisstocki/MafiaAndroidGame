@@ -1,5 +1,6 @@
 package com.example.mafia.composes
 
+import android.app.Activity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -32,16 +33,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.mafia.ui.theme.Black200
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun WelcomeAnimation(
     navController: NavHostController
 ) {
     val offsetX = remember { Animatable(-400f) }
+
+    ChangeStatusBarColor(color = Black200, darkIcons = false)
 
     LaunchedEffect(Unit) {
         offsetX.animateTo(0f, tween(1500, easing = LinearOutSlowInEasing))

@@ -42,6 +42,7 @@ fun StartAnimation(
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp
 
+
     val planes = listOf(
         remember { Animatable(width.value + 100f) },
         remember { Animatable(-100f) },
