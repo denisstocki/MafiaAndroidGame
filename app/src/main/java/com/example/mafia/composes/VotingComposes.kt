@@ -125,8 +125,17 @@ fun VotingCompose(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val voting = if(gameViewModel.game.status == GameStatus.NIGHT_VOTING){
+                "NIGHT VOTING"
+            }
+            else if (gameViewModel.game.status == GameStatus.DAY_VOTING) {
+                "DAY VOTING"
+            }
+            else {
+                ""
+            }
             Text(
-                text = "NIGHT VOTING",
+                text = voting,
                 fontWeight = FontWeight.Bold,
                 fontSize = 50.sp,
                 fontFamily = FontFamily(Font(R.font.anton_regular)),
