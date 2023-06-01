@@ -131,7 +131,7 @@ fun showPlayer(
             )
             Text(
                 text = nickname,
-                style = TextStyle(fontWeight = FontWeight.Normal, fontSize = (height / 4).value.sp),
+                style = TextStyle(fontWeight = FontWeight.Normal, fontSize = (height / 7).value.sp),
                 fontFamily = FontFamily(Font(R.font.anton_regular))
             )
         }

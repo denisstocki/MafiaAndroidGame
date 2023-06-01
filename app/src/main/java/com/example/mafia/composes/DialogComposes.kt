@@ -188,8 +188,8 @@ fun CreateCompose(
             height = heightLower,
             keyboardType = KeyboardType.Text,
             onChange = { txt ->
-                if (txt.length <= 12 && txt.all { !blockedCharacters.contains(it) }) {
-                    nickname = txt
+                if (txt.length <= 11 && txt.all { !blockedCharacters.contains(it) }) {
+                    nickname = txt.uppercase()
                 }
             }
         )
@@ -333,8 +333,8 @@ fun JoinCompose(
             height = heightLower,
             keyboardType = KeyboardType.Text,
             onChange = { txt ->
-                if (txt.length <= 12 && txt.all { !blockedCharacters.contains(it) }) {
-                    nickname = txt
+                if (txt.length <= 11 && txt.all { !blockedCharacters.contains(it) }) {
+                    nickname = txt.uppercase()
                 }
             }
         )
