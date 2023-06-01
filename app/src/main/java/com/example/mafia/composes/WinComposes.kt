@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mafia.R
+import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility.playerList
@@ -35,15 +36,7 @@ fun WinCompose(
     navController: NavController,
     gameViewModel: GameViewModel
 ) {
-    TownWinCompose(navController = navController, gameViewModel)
-}
- // TODO(): DODAC PRZYCISK POWROTU DO MENU
-
-@Composable
-fun TownWinCompose(
-    navController: NavController,
-    gameViewModel: GameViewModel
-) {
+    // TODO(): DODAC PRZYCISK POWROTU DO MENU
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
@@ -100,8 +93,15 @@ fun TownWinCompose(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val winner = if (gameViewModel.game.status == GameStatus.TOWN_WIN){
+                "TOWN WON !"
+            }
+            else {
+                "MAFIA WON !"
+            }
+
             Text(
-                text = "TOWN WON !",
+                text = winner,
                 color = Red500,
                 fontSize = 50.sp,
                 textAlign = TextAlign.Center,

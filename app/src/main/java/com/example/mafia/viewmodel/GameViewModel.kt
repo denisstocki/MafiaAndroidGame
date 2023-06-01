@@ -74,8 +74,13 @@ class GameViewModel : ViewModel() {
                     }
 
                     GameStatus.NIGHT_VOTING.toString() -> { // NIGHT VOTING
-                        game.status = GameStatus.NIGHT_VOTING
-                        navController.navigate(NavigationRoutes.Voting.route)
+                        game.status = checkForWin (GameStatus.NIGHT_VOTING)
+
+                        when(game.status) {
+                            GameStatus.MAFIA_WIN -> navController.navigate(NavigationRoutes.Win.route)
+                            GameStatus.TOWN_WIN -> navController.navigate(NavigationRoutes.Win.route)
+                            else -> navController.navigate(NavigationRoutes.Voting.route)
+                        }
                     }
 
                     GameStatus.AFTER_NIGHT.toString() -> { // WHO IS DEAD OR NOT
@@ -84,8 +89,13 @@ class GameViewModel : ViewModel() {
                     }
 
                     GameStatus.DAY_TALK.toString() -> { // TIME TO TALK
-                        game.status = GameStatus.DAY_TALK
-                        navController.navigate(NavigationRoutes.Day.route)
+                        game.status = checkForWin (GameStatus.DAY_TALK)
+
+                        when(game.status) {
+                            GameStatus.MAFIA_WIN -> navController.navigate(NavigationRoutes.Win.route)
+                            GameStatus.TOWN_WIN -> navController.navigate(NavigationRoutes.Win.route)
+                            else -> navController.navigate(NavigationRoutes.Day.route)
+                        }
                     }
 
                     GameStatus.DAY_VOTING.toString() -> { // ALL PLAYERS ARE VOTING
@@ -117,6 +127,30 @@ class GameViewModel : ViewModel() {
         }
 
         gameStatusReference.addValueEventListener(gameStatusListener)
+    }
+
+    fun checkForWin (statusIfNotWin: GameStatus): GameStatus {
+        var mafiaCount = 0
+        var townCount = 0
+        for(player in playerList){
+            if(player.lifeStatus == LifeStatus.ALIVE){
+                if(player.role == Role.MAFIA){
+                    mafiaCount++
+                }
+                else {
+                    townCount++
+                }
+            }
+        }
+        if (mafiaCount == 0){
+            return GameStatus.TOWN_WIN
+        }
+        else if (mafiaCount == townCount){
+            return GameStatus.MAFIA_WIN
+        }
+        else {
+            return statusIfNotWin
+        }
     }
 
     /** -------------------- GAME-STATUS----------------------*/
@@ -261,7 +295,7 @@ class GameViewModel : ViewModel() {
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
-            TODO("Not yet implemented")
+            voteList.clear()
         }
 
         override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

@@ -175,7 +175,7 @@ fun deathNote(
                     painterResource(id = R.drawable.skull1)
                 }
                 Role.DOCTOR -> {
-                    painterResource(id = R.drawable.shield)
+                    painterResource(id = R.drawable.shield2)
                 }
                 else -> {
                     painterResource(id = R.drawable.mafia_hat)
