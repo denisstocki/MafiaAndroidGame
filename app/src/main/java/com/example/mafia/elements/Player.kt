@@ -132,7 +132,7 @@ fun showPlayer(
             Text(
                 text = nickname,
                 modifier = Modifier.padding(top = padding),
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 18.sp),
                 fontFamily = FontFamily(Font(R.font.anton_regular))
             )
         }
@@ -175,7 +175,7 @@ fun deathNote(
                     painterResource(id = R.drawable.skull1)
                 }
                 Role.DOCTOR -> {
-                    painterResource(id = R.drawable.medic_cross)
+                    painterResource(id = R.drawable.shield)
                 }
                 else -> {
                     painterResource(id = R.drawable.mafia_hat)
