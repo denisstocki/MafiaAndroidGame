@@ -124,14 +124,16 @@ fun VotingCompose(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val voting = if(gameViewModel.game.status == GameStatus.DAY_VOTING){
-                "DAY VOTING"
-            }
-            else if (gameViewModel.game.status == GameStatus.NIGHT_VOTING) {
-                "NIGHT VOTING"
-            }
-            else {
-                ""
+            val voting = when (gameViewModel.game.status) {
+                GameStatus.DAY_VOTING -> {
+                    "DAY VOTING"
+                }
+                GameStatus.NIGHT_VOTING -> {
+                    "NIGHT VOTING"
+                }
+                else -> {
+                    ""
+                }
             }
             Text(
                 text = voting,
