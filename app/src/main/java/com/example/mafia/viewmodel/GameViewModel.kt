@@ -220,7 +220,7 @@ class GameViewModel : ViewModel() {
         if(game.status == GameStatus.DAY_TALK){
             setGameStatus(GameStatus.DAY_VOTING)
         }
-        else {
+        else if (game.status == GameStatus.AFTER_DAY){
             setGameStatus(GameStatus.NIGHT_VOTING)
         }
     }
