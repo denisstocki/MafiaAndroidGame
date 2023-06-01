@@ -118,15 +118,15 @@ fun DeathCompose(
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.anton_regular)),
+                    modifier = Modifier.padding(bottom = 100.dp)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "DEAD",
                     color = Red500,
                     fontSize = 70.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.anton_regular)),
-                    modifier = Modifier.padding(top = 120.dp)
+                    modifier = Modifier.padding(top = 150.dp)
                 )
             }
         }

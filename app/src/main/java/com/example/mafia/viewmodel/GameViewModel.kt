@@ -217,10 +217,10 @@ class GameViewModel : ViewModel() {
         voteList.clear()
         voteReference.removeValue()
         assignVotingListener()
-        if(game.status == GameStatus.AFTER_NIGHT){
-            setGameStatus(GameStatus.DAY_TALK)
+        if(game.status == GameStatus.DAY_TALK){
+            setGameStatus(GameStatus.DAY_VOTING)
         }
-        else if(game.status == GameStatus.AFTER_DAY){
+        else {
             setGameStatus(GameStatus.NIGHT_VOTING)
         }
     }
