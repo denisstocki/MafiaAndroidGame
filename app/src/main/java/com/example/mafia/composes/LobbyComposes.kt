@@ -201,11 +201,15 @@ fun LobbyCompose(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(width / 10),
+                        .padding(width / 20),
                 ) {
                     itemsIndexed(playerList.chunked(3)) { _, rowPlayers ->
                         LazyRow(
-                            modifier = Modifier.padding(vertical = (width / 15))
+                            modifier = Modifier
+                                .padding(
+                                    vertical = (width / 20),
+                                    horizontal = (width / 15)
+                                )
                         ) {
                             items(rowPlayers) { player ->
                                 Box(
