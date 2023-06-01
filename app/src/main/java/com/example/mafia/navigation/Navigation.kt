@@ -49,7 +49,7 @@ fun Navigation(context: Context, gameViewModel: GameViewModel)
         }
 
         composable(route = NavigationRoutes.Win.route) {
-            WinCompose(navController = navController)
+            WinCompose(navController = navController, gameViewModel)
         }
     }
 }

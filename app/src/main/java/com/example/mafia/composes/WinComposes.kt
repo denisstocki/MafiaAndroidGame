@@ -3,7 +3,6 @@ package com.example.mafia.composes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,27 +23,26 @@ import androidx.navigation.NavController
 import com.example.mafia.R
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
-import com.example.mafia.elements.Utility
 import com.example.mafia.elements.Utility.playerList
-import com.example.mafia.elements.deathNote
-import com.example.mafia.firebaseData.dbPlayer
-import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.Black500
-import com.example.mafia.ui.theme.Grey200
 import com.example.mafia.ui.theme.Red500
+import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
 fun WinCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
-    TownWinCompose(navController = navController)
+    TownWinCompose(navController = navController, gameViewModel)
 }
+ // TODO(): DODAC PRZYCISK POWROTU DO MENU
 
 @Composable
 fun TownWinCompose(
-    navController: NavController
+    navController: NavController,
+    gameViewModel: GameViewModel
 ) {
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
@@ -112,7 +110,7 @@ fun TownWinCompose(
                     .padding(top = 16.dp)
             )
 
-            val playerList = ArrayList<dbPlayer>()
+            val playerList = gameViewModel.playerList
 
             Box(modifier = Modifier
                 .fillMaxWidth()

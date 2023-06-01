@@ -96,7 +96,6 @@ fun VotingCompose(
 //        navController.navigate(NavigationRoutes.Death.route)
         gameViewModel.finishVote(Role.MAFIA)
         gameViewModel.finishVote(Role.DOCTOR)
-//        gameViewModel.finishVote(Role.DETECTIVE)
     }
 
     Box(

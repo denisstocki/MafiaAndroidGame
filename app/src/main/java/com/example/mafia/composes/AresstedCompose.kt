@@ -29,7 +29,7 @@ import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
-fun DeathCompose(
+fun ArrestedCompose(
     navController: NavController,
     gameViewModel: GameViewModel
 ) {
@@ -101,8 +101,8 @@ fun DeathCompose(
                 val deadInfoText = if (killedPlayer.value == gameViewModel.game.player!!.nickname) {
                     "YOU ARE"
                 } else if(killedPlayer.value == "") {
-                        "NOBODY IS"
-                    }
+                    "NOBODY IS"
+                }
                 else{
                     "${killedPlayer.value} IS"
                 }

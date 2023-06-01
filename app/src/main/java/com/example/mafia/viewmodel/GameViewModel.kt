@@ -57,6 +57,10 @@ class GameViewModel : ViewModel() {
         gameStatusReference.setValue(GameStatus.STARTED)
     }
 
+    fun setGameStatus (status: GameStatus){
+        gameStatusReference.setValue(status)
+    }
+
     fun assignListenerForGameStatus(navController: NavController){
         gameStatusReference = gamesReference.child(game.pin!!).child("game_status")
         voteReference = gamesReference.child(game.pin!!).child("voting").child(game.player!!.nickname!!)
@@ -74,9 +78,34 @@ class GameViewModel : ViewModel() {
                         navController.navigate(NavigationRoutes.Voting.route)
                     }
 
-                    GameStatus.DAY_TALK.toString() -> { // DAY VOTING
-                        game.status = GameStatus.DAY_TALK
+                    GameStatus.AFTER_NIGHT.toString() -> { // WHO IS DEAD OR NOT
+                        game.status = GameStatus.AFTER_NIGHT
                         navController.navigate(NavigationRoutes.Death.route)
+                    }
+
+                    GameStatus.DAY_TALK.toString() -> { // TIME TO TALK
+                        game.status = GameStatus.DAY_TALK
+                        navController.navigate(NavigationRoutes.Day.route)
+                    }
+
+                    GameStatus.DAY_VOTING.toString() -> { // ALL PLAYERS ARE VOTING
+                        game.status = GameStatus.DAY_VOTING
+                        navController.navigate(NavigationRoutes.Voting.route)
+                    }
+
+                    GameStatus.AFTER_DAY.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
+                        game.status = GameStatus.AFTER_DAY
+                        navController.navigate(NavigationRoutes.Death.route)
+                    }
+
+                    GameStatus.MAFIA_WIN.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
+                        game.status = GameStatus.MAFIA_WIN
+                        navController.navigate(NavigationRoutes.Win.route)
+                    }
+
+                    GameStatus.TOWN_WIN.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
+                        game.status = GameStatus.TOWN_WIN
+                        navController.navigate(NavigationRoutes.Win.route)
                     }
                 }
             }
@@ -149,7 +178,7 @@ class GameViewModel : ViewModel() {
         voteList.clear()
         voteReference.removeValue()
         assignVotingListener()
-        gameStatusReference.setValue(GameStatus.NIGHT_VOTING)
+        setGameStatus(GameStatus.NIGHT_VOTING)
     }
 
     fun playerVote(playerToVote: dbPlayer){
@@ -190,7 +219,12 @@ class GameViewModel : ViewModel() {
             }
         }
         if(role == Role.DOCTOR){
-            gameStatusReference.setValue(GameStatus.DAY_TALK)
+            if(game.status == GameStatus.NIGHT_VOTING){
+                setGameStatus(GameStatus.AFTER_NIGHT)
+            }
+            else if (game.status == GameStatus.DAY_VOTING){
+                setGameStatus(GameStatus.AFTER_DAY)
+            }
         }
     }
 
