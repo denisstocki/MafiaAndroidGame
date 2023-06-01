@@ -142,10 +142,11 @@ fun showPlayer(
 
 @Composable
 fun deathNote(
-    nickname: String
+    player: dbPlayer,
+    fromRole: Role
 ) {
     var scale: Float
-    if (nickname.last() == 'A'){
+    if (player.nickname!!.last() == 'A'){
         scale = 1.20f
     }
     else{
@@ -169,14 +170,36 @@ fun deathNote(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
+            var image = when (fromRole) {
+                Role.MAFIA -> {
+                    painterResource(id = R.drawable.skull1)
+                }
+                Role.DOCTOR -> {
+                    painterResource(id = R.drawable.medic_cross)
+                }
+                else -> {
+                    painterResource(id = R.drawable.mafia_hat)
+                }
+            }
+
+            if(fromRole == Role.DETECTIVE) {
+                image = when (player.role) {
+                    Role.MAFIA -> painterResource(id = R.drawable.mafia_icon)
+                    Role.DETECTIVE -> painterResource(id = R.drawable.detective_glass)
+                    Role.CIVIL -> painterResource(id = R.drawable.town_house)
+                    Role.DOCTOR -> painterResource(id = R.drawable.medic1)
+                    else -> {painterResource(id = R.drawable.mafia_hat)}
+                }
+            }
             Image(
-                painter = painterResource(id = R.drawable.skull1),
+                painter = image,
                 contentDescription = null,
                 modifier = Modifier.size(130.dp * scale)
             )
             Spacer(modifier = Modifier.height(10.dp))
+
             Text(
-                text = nickname,
+                text = player.nickname!!,
                 modifier = Modifier.height(300.dp - 130.dp * scale - 30.dp),
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 40.sp),
                 fontFamily = FontFamily(Font(R.font.anton_regular)),

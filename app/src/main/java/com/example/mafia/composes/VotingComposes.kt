@@ -28,11 +28,8 @@ import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
-import com.example.mafia.elements.Utility
-import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.deathNote
 import com.example.mafia.firebaseData.dbPlayer
-import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Red500
 import com.example.mafia.viewmodel.GameViewModel
 
@@ -174,8 +171,8 @@ fun VotingCompose(
                 }
             }
 
-            var votedPlayerNickname by remember {
-                mutableStateOf("")
+            var votedPlayer by remember {
+                mutableStateOf(dbPlayer())
             }
 
             Box(modifier = Modifier
@@ -192,7 +189,7 @@ fun VotingCompose(
                         items(playerList) { player ->
                             Player("", Role.EMPTY).votePlayer(player){
                                 gameViewModel.playerVote(player)
-                                votedPlayerNickname = player.nickname!!
+                                votedPlayer = player
                                 voted = true
                             }
                         }
@@ -200,7 +197,7 @@ fun VotingCompose(
 
                 } else {
                     Box(modifier = Modifier.padding((width - 300.dp) / 2)) {
-                        deathNote(votedPlayerNickname)
+                        deathNote(votedPlayer,gameViewModel.game.player!!.role!!)
                     }
                 }
             }
