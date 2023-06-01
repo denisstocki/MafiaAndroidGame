@@ -36,7 +36,7 @@ fun DayCompose(
     navController: NavController,
     gameViewModel: GameViewModel
 ) {
-    val time = 15000f
+    val time = 10000f
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
     val remainingTime = remember { Animatable(time) }

@@ -69,7 +69,12 @@ fun DeathCompose(
 
     LaunchedEffect(Unit) {
         time.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 10000, easing = LinearEasing))
-        gameViewModel.setGameStatus(GameStatus.DAY_TALK)
+        if(gameViewModel.game.status == GameStatus.AFTER_NIGHT){
+            gameViewModel.setGameStatus(GameStatus.DAY_TALK)
+        }
+        else if(gameViewModel.game.status == GameStatus.AFTER_DAY){
+            gameViewModel.setGameStatus(GameStatus.NIGHT_VOTING)
+        }
     }
 
     Box(

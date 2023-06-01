@@ -252,6 +252,7 @@ class GameViewModel : ViewModel() {
                 gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(mapOf("lifeStatus" to player.lifeStatus.toString()))
             }
         }
+
         if(role == Role.DOCTOR){
             if(game.status == GameStatus.NIGHT_VOTING){
                 setGameStatus(GameStatus.AFTER_NIGHT)
