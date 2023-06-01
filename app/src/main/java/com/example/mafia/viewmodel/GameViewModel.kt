@@ -392,6 +392,9 @@ class GameViewModel : ViewModel() {
                     if(playerChanged.lifeStatus == LifeStatus.DEAD){
                         latestKilled.value = playerChanged.nickname!!
                     }
+                    else if(playerChanged.lifeStatus == LifeStatus.ALIVE){
+                        latestKilled.value = ""
+                    }
 
                     Log.println(Log.ASSERT,"Test", "changed player ${playerChanged.nickname} ${playerChanged.isAdmin}")
                 } else {

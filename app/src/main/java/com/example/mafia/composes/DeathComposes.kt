@@ -99,9 +99,12 @@ fun DeathCompose(
                 val killedPlayer = gameViewModel.latestKilled
                 val deadInfoText = if (killedPlayer.value == gameViewModel.game.player!!.nickname) {
                     "YOU ARE"
-                } else {
-                        "${killedPlayer.value} IS"
+                } else if(killedPlayer.value == "") {
+                        "NO ONE IS"
                     }
+                else{
+                    "${killedPlayer.value} IS"
+                }
 
                 Text(
                     text = deadInfoText,
