@@ -93,7 +93,7 @@ fun VotingCompose(
     }
 
     LaunchedEffect(Unit) {
-        used.animateTo(1.0f, animationSpec = tween(durationMillis = 30000, easing = LinearEasing))
+        used.animateTo(1.0f, animationSpec = tween(durationMillis = 35000, easing = LinearEasing))
         if (gameViewModel.game.status == GameStatus.NIGHT_VOTING) {
             gameViewModel.finishVote(Role.MAFIA)
             gameViewModel.finishVote(Role.DOCTOR)

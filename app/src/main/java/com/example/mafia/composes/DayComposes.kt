@@ -34,7 +34,7 @@ import kotlinx.coroutines.delay
 fun DayCompose(
     navController: NavController,
     gameViewModel: GameViewModel,
-    time: Float = 10*1000f
+    time: Float = 30*1000f
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp

@@ -45,7 +45,7 @@ fun LoadingCompose(
 
     LaunchedEffect(key1 = true)
     {
-        delay(2000)
+        delay(10*1000)
         gameViewModel.setGameStatus(GameStatus.DAY_TALK)
     }
 
