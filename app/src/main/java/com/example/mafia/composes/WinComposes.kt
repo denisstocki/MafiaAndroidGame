@@ -3,10 +3,13 @@ package com.example.mafia.composes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +32,7 @@ import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
 import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.elements.endGamePlayerShow
+import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Black500
 import com.example.mafia.ui.theme.Red500
 import com.example.mafia.viewmodel.GameViewModel
@@ -38,7 +44,6 @@ fun WinCompose(
     navController: NavController,
     gameViewModel: GameViewModel
 ) {
-    // TODO(): DODAC PRZYCISK POWROTU DO MENU
 
     val width = LocalConfiguration.current.screenWidthDp.dp           // This variable is used to hold current screen width in dp
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
@@ -76,6 +81,15 @@ fun WinCompose(
             .fillMaxSize()
             .background(Black500)
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.town1),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height / 4)
+                .offset(x = 0.dp, y = height * 3 / 4),
+        )
+
         drops.forEachIndexed { index, value ->
             Image(
                 painter = painterResource(id = R.drawable.ballons1),
@@ -111,7 +125,6 @@ fun WinCompose(
                 modifier = Modifier
                     .padding(top = 16.dp)
             )
-
             val playerList = gameViewModel.playerList
 
             Box(modifier = Modifier
@@ -134,12 +147,51 @@ fun WinCompose(
                 mutableStateOf(false) // Initially dialog is closed
             }
         }
+        Box(
+            modifier = Modifier
+                .width(width * 3 / 5)
+                .height(width / 5)
+                .align(Alignment.Center)
+                .offset(0.dp, 160.dp)
+        ) {
+            ClickableEndButton(
+                "BACK TO MENU",
+                Color.White,
+            ) {
+                gameViewModel.deleteGame()
+                navController.navigate(NavigationRoutes.Start.route)
+            }
+        }
     }
-    Image(
-        painter = painterResource(id = R.drawable.town1),
-        contentDescription = null,
-        modifier = androidx.compose.ui.Modifier
-            .size(width)
-            .offset(y = height - 353.dp)
-    )
+}
+
+@Composable
+fun ClickableEndButton(
+    text: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+    action: () -> Unit
+) {
+    BoxWithConstraints {
+        val halfHeight = maxHeight / 2
+        val fontSize = with(LocalDensity.current) { halfHeight.value } - 10
+
+        Box(
+            modifier
+                .fillMaxSize()
+                .clickable { action() }
+                .border(5.dp, color = color, shape = RoundedCornerShape(20.dp))
+                .background(color = Color.Black, shape = RoundedCornerShape(20.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                color = color,
+                fontSize = fontSize.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily(Font(R.font.anton_regular)),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
 }

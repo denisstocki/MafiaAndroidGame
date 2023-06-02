@@ -10,5 +10,7 @@ sealed class NavigationRoutes(
     object Day: NavigationRoutes("day_screen")
     object Voting: NavigationRoutes("voting_screen")
     object Death: NavigationRoutes("death_screen")
+    object Arrest: NavigationRoutes("arrest_screen")
+
     object Win: NavigationRoutes("win_screen")
 }

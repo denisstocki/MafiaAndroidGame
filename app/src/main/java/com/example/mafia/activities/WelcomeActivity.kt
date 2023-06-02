@@ -27,7 +27,7 @@ class WelcomeActivity : ComponentActivity() {
         savedInstanceState: Bundle?
     ) {
         super.onCreate(savedInstanceState)
-
+        gameViewModel.resetPinNumbers()
         setContent {
             ChangeNavigationBarColor(color = Black200)
 
@@ -35,5 +35,22 @@ class WelcomeActivity : ComponentActivity() {
                 Navigation(context = this,gameViewModel)
             }
         }
+    }
+
+    public override fun onDestroy() {
+        Log.println(Log.ASSERT,"LifeCycle", "On Destroy entered...")
+
+        if (gameViewModel.game.pin != null) {
+            gameViewModel.removePlayer()
+        }
+        super.onDestroy()
+    }
+    public override fun onStop() {
+        Log.println(Log.ASSERT,"LifeCycle", "On stop entered...")
+
+        if (gameViewModel.game.pin != null) {
+            gameViewModel.removePlayer()
+        }
+        super.onStop()
     }
 }

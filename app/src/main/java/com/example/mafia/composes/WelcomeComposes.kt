@@ -1,13 +1,11 @@
 package com.example.mafia.composes
 
-import android.app.Activity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
@@ -27,20 +25,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mafia.R
 import com.example.mafia.navigation.NavigationRoutes
-import com.example.mafia.ui.theme.Grey200
+import com.example.mafia.ui.theme.Gray200
 import com.example.mafia.ui.theme.Red500
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.mafia.ui.theme.Black200
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -111,7 +101,7 @@ fun WelcomeCompose(
             Box(
                 modifier = Modifier
                     .size(width * 2 / 5)
-                    .background(Grey200, CircleShape)
+                    .background(Gray200, CircleShape)
                     .offset(x = -offsetX.value.dp)
             ) {
                 Box(

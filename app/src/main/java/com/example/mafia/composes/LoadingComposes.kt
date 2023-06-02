@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mafia.R
+import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.Role
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Red500
@@ -45,7 +46,7 @@ fun LoadingCompose(
     LaunchedEffect(key1 = true)
     {
         delay(2000)
-        navController.navigate(NavigationRoutes.Day.route)
+        gameViewModel.setGameStatus(GameStatus.DAY_TALK)
     }
 
     Box(

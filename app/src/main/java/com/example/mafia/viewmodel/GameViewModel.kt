@@ -8,9 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.LifeStatus
-import com.example.mafia.elements.Player
 import com.example.mafia.elements.Role
-import com.example.mafia.elements.Utility.playerList
 import com.example.mafia.firebaseData.Game
 import com.example.mafia.firebaseData.Vote
 import com.example.mafia.firebaseData.dbPlayer
@@ -37,6 +35,7 @@ class GameViewModel : ViewModel() {
     var latestKilled: MutableState<String> = mutableStateOf("")
 
     private var assignFlag = false
+    private var votingAssignFlag = false
 
     private lateinit var gameStatusListener: ValueEventListener
 
@@ -68,6 +67,7 @@ class GameViewModel : ViewModel() {
         gameStatusListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 when(snapshot.value){
+
                     GameStatus.STARTED.toString() -> { // STARTED
                         game.status = GameStatus.STARTED
                         navController.navigate(NavigationRoutes.Loading.route)
@@ -110,7 +110,7 @@ class GameViewModel : ViewModel() {
                     GameStatus.AFTER_DAY.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
                         game.status = GameStatus.AFTER_DAY
                         Log.println(Log.ASSERT,"TEST", "AFTER_DAY")
-                        navController.navigate(NavigationRoutes.Death.route)
+                        navController.navigate(NavigationRoutes.Arrest.route)
                     }
 
                     GameStatus.MAFIA_WIN.toString() -> { // ARRESTING POTENTIAL MAFIA PLAYER
@@ -165,6 +165,7 @@ class GameViewModel : ViewModel() {
         game = Game()
         playerList.clear()
         assignFlag = false
+        votingAssignFlag = false
         ifIamAdmin.value = true
 
         val databaseReference = FirebaseDatabase.getInstance().getReference("GamePinNumbers")
@@ -216,11 +217,15 @@ class GameViewModel : ViewModel() {
     fun beginVoting() {
         voteList.clear()
         voteReference.removeValue()
-        assignVotingListener()
+
+        if(!votingAssignFlag) {
+            assignVotingListener()
+        }
+
         if(game.status == GameStatus.DAY_TALK){
             setGameStatus(GameStatus.DAY_VOTING)
         }
-        else {
+        else if (game.status == GameStatus.AFTER_DAY){
             setGameStatus(GameStatus.NIGHT_VOTING)
         }
     }
@@ -272,8 +277,30 @@ class GameViewModel : ViewModel() {
             }
         }
     }
+    fun finishDayVote(){
+        var voteCounter = 0
+        var maxCount = 0
+        var votedNickname = ""
+
+        for(vote in voteList){
+            voteCounter++
+
+            if(voteCounter > maxCount){
+                maxCount = voteCounter
+                votedNickname = vote.playerVoted!!
+            }
+        }
+
+        for (player in playerList){
+            if(player.nickname == votedNickname){
+                player.lifeStatus = LifeStatus.DEAD
+                gamesReference.child(game.pin!!).child(player.nickname!!).updateChildren(mapOf("lifeStatus" to player.lifeStatus.toString()))
+            }
+        }
+    }
 
     private fun assignVotingListener(){
+        votingAssignFlag = true
         val votingRef = gamesReference.child(game.pin!!).child("voting")
         Log.println(Log.ASSERT,"Test", "voting listener on ${game.pin}")
 
@@ -658,6 +685,16 @@ class GameViewModel : ViewModel() {
     /**--------------------------- JOINING LOBBY ERROR CATCHES------------------------------ */
     /**------------------------------------- END------------------------------------------- */
 
+
+    fun deleteGame(){
+        gamesReference.child(game.pin!!).child(game.player!!.nickname!!).removeValue()
+        gamesReference.child(game.pin!!).removeEventListener(childEventListenerOnGame)
+        gamesReference.child(game.pin!!).removeValue()
+        pinsReference.child(game.pin!!).setValue(true)
+
+        assignFlag = false
+        ifIamAdmin.value = false
+    }
 
     fun resetPinNumbers(){
         val firebaseDatabase = FirebaseDatabase.getInstance()

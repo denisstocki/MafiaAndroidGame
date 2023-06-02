@@ -309,6 +309,7 @@ fun PlaneCompose(
 fun ClickableButton(
     text: String,
     color: Color,
+    modifier: Modifier = Modifier,
     action: () -> Unit
 ) {
     BoxWithConstraints {
@@ -316,7 +317,7 @@ fun ClickableButton(
         val fontSize = with(LocalDensity.current) { halfHeight.value }
 
         Box(
-            modifier = Modifier
+            modifier
                 .fillMaxSize()
                 .clickable { action() }
                 .border(5.dp, color = color, shape = RoundedCornerShape(20.dp))

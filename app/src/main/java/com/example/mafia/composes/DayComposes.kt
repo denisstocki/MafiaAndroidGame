@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mafia.R
-import com.example.mafia.navigation.NavigationRoutes
-import com.example.mafia.ui.theme.Grey200
+import com.example.mafia.ui.theme.Gray200
 import com.example.mafia.ui.theme.Red500
 import com.example.mafia.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
@@ -41,7 +40,7 @@ fun DayCompose(
     val height = LocalConfiguration.current.screenHeightDp.dp         // This variable is used to hold current screen height in dp
     val remainingTime = remember { Animatable(time) }
     val rotationAngle = remember { Animatable(0f) }
-    val color = remember { Animatable(Grey200) }
+    val color = remember { Animatable(Gray200) }
     val textColor = remember { Animatable(Color.White) }
 
     LaunchedEffect(Unit) {

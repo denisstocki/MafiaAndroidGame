@@ -72,9 +72,6 @@ fun DeathCompose(
         if(gameViewModel.game.status == GameStatus.AFTER_NIGHT){
             gameViewModel.setGameStatus(GameStatus.DAY_TALK)
         }
-        else if(gameViewModel.game.status == GameStatus.AFTER_DAY){
-            gameViewModel.setGameStatus(GameStatus.NIGHT_VOTING)
-        }
     }
 
     Box(

@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +35,7 @@ import com.example.mafia.R
 import com.example.mafia.elements.showPlayer
 import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Black200
-import com.example.mafia.ui.theme.Grey200
+import com.example.mafia.ui.theme.Gray200
 import com.example.mafia.ui.theme.Red500
 import com.example.mafia.viewmodel.GameViewModel
 
@@ -137,7 +136,7 @@ fun LobbyCompose(
                     backgroundColor = Red500
                     Log.println(Log.ASSERT,"Test", "Czerwony")
                 } else {
-                    backgroundColor = Grey200
+                    backgroundColor = Gray200
                     Log.println(Log.ASSERT,"Test", "szary")
 
                 }
@@ -213,7 +212,7 @@ fun LobbyCompose(
                         ) {
                             items(rowPlayers) { player ->
                                 Box(
-                                    modifier = Modifier.size(height / 7)
+                                    modifier = Modifier.size(height / 8)
                                         .padding(horizontal = 5.dp)
                                 ) {
                                     showPlayer(player.nickname.toString(), height / 7)

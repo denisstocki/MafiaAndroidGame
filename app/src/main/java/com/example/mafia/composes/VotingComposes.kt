@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import com.example.mafia.elements.arrestedNote
 import com.example.mafia.elements.GameStatus
 import com.example.mafia.elements.LifeStatus
 import com.example.mafia.elements.Player
@@ -68,7 +69,7 @@ fun VotingCompose(
 
             GameStatus.DAY_VOTING -> { // VOTING FOR DAY
                 for (player in gameViewModel.playerList) {
-                    if ( player.lifeStatus == LifeStatus.ALIVE && player.role != Role.MAFIA) {
+                    if ( player.lifeStatus == LifeStatus.ALIVE) {
                         playerList.add(player)
                     }
                 }
@@ -92,9 +93,14 @@ fun VotingCompose(
     }
 
     LaunchedEffect(Unit) {
-        used.animateTo(1.0f, animationSpec = tween(durationMillis = 20000, easing = LinearEasing))
-        gameViewModel.finishVote(Role.MAFIA)
-        gameViewModel.finishVote(Role.DOCTOR)
+        used.animateTo(1.0f, animationSpec = tween(durationMillis = 30000, easing = LinearEasing))
+        if (gameViewModel.game.status == GameStatus.NIGHT_VOTING) {
+            gameViewModel.finishVote(Role.MAFIA)
+            gameViewModel.finishVote(Role.DOCTOR)
+        }
+        else {
+            gameViewModel.finishDayVote()
+        }
     }
 
     Box(
@@ -206,18 +212,16 @@ fun VotingCompose(
 
                 } else {
                     Box(modifier = Modifier.padding((width - 300.dp) / 2)) {
-                        deathNote(votedPlayer,gameViewModel.game.player!!.role!!)
+                        if (gameViewModel.game.status == GameStatus.NIGHT_VOTING) {
+                            deathNote(votedPlayer, gameViewModel.game.player!!.role!!)
+                        }
+                        else {
+                            arrestedNote(player = votedPlayer)
+                        }
                     }
                 }
             }
 
         }
     }
-}
-
-@Composable
-fun votingForDead(
-
-){
-
 }
