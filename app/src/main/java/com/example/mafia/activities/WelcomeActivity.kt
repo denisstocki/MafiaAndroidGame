@@ -14,6 +14,7 @@ import com.example.mafia.composes.ChangeNavigationBarColor
 import com.example.mafia.composes.WelcomeCompose
 import com.example.mafia.elements.Utility
 import com.example.mafia.navigation.Navigation
+import com.example.mafia.navigation.NavigationRoutes
 import com.example.mafia.ui.theme.Black200
 import com.example.mafia.ui.theme.MafiaTheme
 import com.example.mafia.viewmodel.GameViewModel
@@ -27,12 +28,11 @@ class WelcomeActivity : ComponentActivity() {
         savedInstanceState: Bundle?
     ) {
         super.onCreate(savedInstanceState)
-        gameViewModel.resetPinNumbers()
         setContent {
             ChangeNavigationBarColor(color = Black200)
 
             MafiaTheme{
-                Navigation(context = this,gameViewModel)
+                Navigation(context = this,gameViewModel, NavigationRoutes.Welcome.route)
             }
         }
     }

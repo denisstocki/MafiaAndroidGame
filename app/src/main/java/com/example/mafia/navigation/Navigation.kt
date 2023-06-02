@@ -9,13 +9,13 @@ import com.example.mafia.composes.*
 import com.example.mafia.viewmodel.GameViewModel
 
 @Composable
-fun Navigation(context: Context, gameViewModel: GameViewModel)
+fun Navigation(context: Context, gameViewModel: GameViewModel, start: String)
 {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.Welcome.route
+        startDestination = start
     ){
 
         // Works fine
